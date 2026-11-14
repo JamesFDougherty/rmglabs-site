@@ -1,0 +1,7 @@
+
+# added by backup-to-github.ps1
+.env
+.env.local
+.env*.local
+node_modules/
+_backup/
