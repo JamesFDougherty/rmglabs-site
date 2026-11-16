@@ -150,3 +150,32 @@ footer .tagline{letter-spacing:.14em;text-transform:uppercase;font-size:.75rem}
 .guide th,.guide td{text-align:left;padding:10px 14px;border:1px solid var(--line);vertical-align:top}
 .guide th{background:var(--panel2);color:var(--text);font-weight:600}
 .guide td{background:var(--panel);color:var(--muted)}
+
+/* blog */
+.blog-hero{padding:56px 0 24px;background:radial-gradient(900px 400px at 75% 0%,rgba(63,157,253,.16),transparent 70%)}
+.blog-hero h1{font-size:clamp(1.9rem,4vw,2.8rem);max-width:20em}
+.blog-hero .back{display:inline-block;margin-bottom:18px;font-size:.9rem}
+.blog-hero .lead{margin-top:6px}
+.post-meta{display:flex;flex-wrap:wrap;gap:8px 16px;color:var(--muted);font-size:.88rem;margin-top:14px}
+.blog-list{padding:36px 0 84px}
+.post-card{display:block;background:var(--panel);border:1px solid var(--line);border-radius:24px;padding:32px;color:var(--text);transition:border-color .15s}
+.post-card + .post-card{margin-top:20px}
+.post-card:hover{border-color:var(--blue);text-decoration:none}
+.post-card h2{font-size:1.5rem;margin:8px 0 10px}
+.post-card p{color:var(--muted);margin-bottom:14px}
+.post-card .more{color:var(--blue2);font-weight:600}
+.post-body{padding:40px 0 84px}
+.post{max-width:760px;margin:0 auto}
+.post h2{font-size:1.55rem;margin:44px 0 12px;line-height:1.25}
+.post h2:first-child{margin-top:0}
+.post p,.post li{color:var(--muted);margin-bottom:14px;font-size:1.05rem}
+.post strong{color:var(--text)}
+.post .ticks{margin:8px 0 20px}
+.post .ticks li{font-size:1rem}
+.post-cta{margin-top:40px;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:28px}
+.post-cta h3{font-size:1.2rem;margin-bottom:6px}
+.post-cta p{margin-bottom:0}
+.post-cta .cta{margin-top:18px}
+.author{margin-top:28px;padding-top:24px;border-top:1px solid var(--line)}
+.author h4{font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.author p{font-size:.95rem}
