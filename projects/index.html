@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Projects | RMGLabs</title>
+<meta name="description" content="Mobile apps and tools built by RMGLabs: membership, ordering, device control and more.">
+<meta property="og:title" content="Projects | RMGLabs">
+<meta property="og:description" content="Mobile apps and tools built by RMGLabs: membership, ordering, device control and more.">
+<meta property="og:url" content="https://rmglabs.net/projects/">
+<meta property="og:image" content="https://rmglabs.net/assets/brand/social/og-image.png">
+<link rel="canonical" href="https://rmglabs.net/projects/">
+<meta name="theme-color" content="#14161c">
+<link rel="icon" href="../assets/brand/icons/favicon.ico" sizes="48x48">
+<link rel="icon" href="../assets/brand/icons/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../assets/brand/icons/apple-touch-icon.png">
+<link rel="manifest" href="../assets/brand/site.webmanifest">
+<link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+<header class="nav"><div class="wrap">
+  <a class="brand" href="../index.html"><img src="../assets/brand/logo/svg/rmg-labs-logo-notagline-dark.svg" alt="RMG Labs" height="46"></a>
+  <nav><a href="./">Projects</a><a href="../index.html#about">About</a><a href="../blog/">Blog</a><a href="../index.html#contact" class="pill">Contact</a></nav>
+</div></header>
+
+<main>
+<section class="proj-hero"><div class="wrap">
+  <div class="eyebrow">Selected work</div>
+  <h1>Apps and tools <em>I am building</em></h1>
+  <p class="lead">Each project has its own page with screens, features and the tech behind it.</p>
+</div></section>
+<section class="proj-page"><div class="wrap">
+  <div class="filters" role="group" aria-label="Filter projects">
+    <button type="button" data-filter="all" aria-pressed="true">All</button>
+    <button type="button" data-filter="apps" aria-pressed="false">Business apps</button>
+    <button type="button" data-filter="consumer" aria-pressed="false">Consumer apps</button>
+    <button type="button" data-filter="tools" aria-pressed="false">Tools</button>
+  </div>
+  <div class="proj-grid">
+<a class="proj-card" href="reps-gym.html" data-cat="apps">
+  <div class="proj-top"><img src="../assets/reps-icon.webp" alt="" width="56" height="56"><div><h3>REPS Gym</h3><span class="status">In development</span></div></div>
+  <p>Membership app for a local training gym: sign-up, owner approval, trainer session tools.</p>
+  <div class="tags"><span class="tag">React Native</span><span class="tag">Supabase</span></div>
+</a>
+<a class="proj-card" href="beam.html" data-cat="consumer">
+  <div class="proj-top"><img src="../assets/beam-icon.webp" alt="" width="56" height="56"><div><h3>Beam</h3><span class="status">Early prototype</span></div></div>
+  <p>One phone remote for every TV in the house. Roku, Samsung, Google TV and Fire TV.</p>
+  <div class="tags"><span class="tag">React Native</span><span class="tag">Node.js</span></div>
+</a>
+<a class="proj-card" href="black-mountain.html" data-cat="apps">
+  <div class="proj-top"><img src="../assets/blackmountain.webp" alt="" width="56" height="56"><div><h3>Black Mountain Coffee Roasting</h3><span class="status soon">Coming soon</span></div></div>
+  <p>Customer app for a local coffee roaster: ordering, rewards and new-roast news.</p>
+  <div class="tags"><span class="tag">React Native</span></div>
+</a>
+<a class="proj-card" href="cert-study-hub.html" data-cat="tools">
+  <div class="proj-top"><div class="glyph" aria-hidden="true">&#127891;</div><div><h3>Cert Study Hub</h3><span class="status">Windows tool</span></div></div>
+  <p>Turns vendor documentation into practice exams, with scores and a team leaderboard.</p>
+  <div class="tags"><span class="tag">PowerShell</span><span class="tag">Windows Forms</span></div>
+</a>
+  </div>
+  <p class="proj-empty" id="none" hidden>No projects in this category yet.</p>
+</div></section>
+</main>
+
+<footer><div class="wrap">
+  <div>&copy; <span id="yr">2026</span> RMGLabs &middot; <span class="tagline">Higher ideas. Brighter solutions.</span></div>
+  <div><a href="./">Projects</a><a href="../blog/">Blog</a><a href="../privacy.html">Privacy</a><a href="../support.html">Support</a></div>
+</div></footer>
+<script>document.getElementById("yr").textContent = new Date().getFullYear();</script>
+<script>
+(function(){
+  var btns=document.querySelectorAll('.filters button'),cards=document.querySelectorAll('.proj-card'),none=document.getElementById('none');
+  function apply(f){
+    var n=0;
+    cards.forEach(function(c){var show=f==='all'||c.getAttribute('data-cat')===f;c.hidden=!show;if(show)n++;});
+    btns.forEach(function(b){b.setAttribute('aria-pressed',b.getAttribute('data-filter')===f?'true':'false');});
+    none.hidden=n>0;
+  }
+  btns.forEach(function(b){b.addEventListener('click',function(){var f=b.getAttribute('data-filter');apply(f);try{history.replaceState(null,'',f==='all'?'./':'#'+f);}catch(e){}});});
+  var h=location.hash.replace('#','');
+  if(h&&document.querySelector('.filters [data-filter="'+h+'"]'))apply(h);
+})();
+</script>
+</body>
+</html>
