@@ -126,7 +126,10 @@ footer .tagline{letter-spacing:.14em;text-transform:uppercase;font-size:.75rem}
   .app{padding:24px}
   .tool{grid-template-columns:1fr}
   .shots img{height:380px}
-  .nav nav a:not(.pill){display:none}
+  .nav nav a:not(.pill){margin-left:14px;font-size:.9rem}
+  .nav nav a[href$="#build"],.nav nav a[href$="#about"]{display:none}
+  .brand img{height:36px}
+  .nav nav a.pill{padding:7px 13px}
 }
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
 
