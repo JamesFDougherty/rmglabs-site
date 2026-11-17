@@ -198,9 +198,11 @@ footer .tagline{letter-spacing:.14em;text-transform:uppercase;font-size:.75rem}
 .proj-card p{color:var(--muted);font-size:.95rem;margin-bottom:16px;flex:1}
 .proj-card .tags{margin-top:auto}
 .proj-cta{display:flex;align-items:center;gap:6px;margin-top:16px;padding-top:14px;border-top:1px solid var(--line);color:var(--blue2);font-weight:600;font-size:.92rem}
+.proj-cta{animation:cta-flash 1.6s ease-in-out infinite}
 .proj-cta span{display:inline-block;transition:transform .15s}
+@keyframes cta-flash{0%,100%{opacity:1;text-shadow:0 0 0 rgba(124,192,255,0)}50%{opacity:.35;text-shadow:0 0 12px rgba(124,192,255,.9)}}
 .proj-card:hover .proj-cta span{transform:translateX(4px)}
-.proj-card:hover .proj-cta{color:var(--text)}
+.proj-card:hover .proj-cta{color:var(--text);animation:none}
 .proj-more{margin-top:34px;text-align:center}
 .proj-empty{color:var(--muted);margin-top:10px}
 .proj-page{padding:40px 0 84px}
