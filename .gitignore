@@ -5,3 +5,6 @@
 .env*.local
 /node_modules/
 _backup/
+
+# added by backup-to-github.ps1
+node_modules/
