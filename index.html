@@ -12,19 +12,29 @@
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="theme-color" content="#14161c">
+<meta name="theme-color" content="#f4f7fb">
 <link rel="icon" href="assets/brand/icons/favicon.ico" sizes="48x48">
 <link rel="icon" href="assets/brand/icons/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="assets/brand/icons/apple-touch-icon.png">
 <link rel="manifest" href="assets/brand/site.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="home.css">
 </head>
-<body>
+<body class="home">
 
 <header class="nav">
   <div class="wrap">
-    <a class="brand" href="#top"><img src="assets/brand/logo/svg/rmg-labs-logo-notagline-dark.svg" alt="RMG Labs" height="46"></a>
-    <nav>
+    <a class="logo" href="#top" aria-label="RMG Labs home">
+      <svg class="peak" viewBox="0 0 40 38" aria-hidden="true"><polygon points="2,36 18,3 28,22 20,36" fill="#3f9dfd"/><polygon points="18,3 38,36 24,36 20,22" fill="#1f56d6"/></svg>
+      <span class="word"><span class="rmg">RMG</span> <span class="labs">LABS</span></span>
+    </a>
+    <button class="menu-btn" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="site-nav">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    </button>
+    <nav id="site-nav">
       <a href="#build">What I build</a>
       <a href="projects/">Projects</a>
       <a href="#about">About</a>
@@ -38,6 +48,7 @@
 
 <!-- HERO -->
 <section class="hero">
+  <img class="hero-bg" src="assets/topo.svg" alt="" aria-hidden="true" width="1440" height="1060">
   <div class="wrap">
     <div>
       <div class="eyebrow">Mobile app development</div>
@@ -46,6 +57,7 @@
       <div class="cta">
         <a class="btn primary" href="projects/">See my work</a>
         <a class="btn" href="#contact">Talk about your idea</a>
+        <a class="btn dark" href="blog/">Blog</a>
       </div>
       <div class="badges">
         <span class="badge"><b>US Army</b> veteran</span>
@@ -53,29 +65,33 @@
         <span class="badge"><b>iPhone &amp; Android</b></span>
       </div>
     </div>
-    <div class="hero-logo"><img src="assets/brand/social/og-image.svg" alt="RMG Labs logo. Higher ideas. Brighter solutions." width="1200" height="630"></div>
+    <div class="phone">
+      <div class="phone-frame"><img src="assets/the-gym-home.webp" alt="The GYM app home screen" width="280" height="580"></div>
+    </div>
   </div>
 </section>
 
 <!-- WHAT I BUILD -->
-<section id="build" class="alt">
-  <div class="wrap">
-    <div class="kicker">What I build</div>
-    <h2>Apps that do real work for your business</h2>
-    <p class="sub">Not a template and not a brochure. Each app is built around how your business actually runs and how your customers actually behave.</p>
-    <div class="grid3">
-      <div class="feat"><div class="ic">&#128241;</div><h3>Customer sign-up &amp; accounts</h3><p>Let people join, sign in and manage their details from their phone. No paper forms, no front-desk bottleneck.</p></div>
-      <div class="feat"><div class="ic">&#128276;</div><h3>Push notifications</h3><p>Reach customers directly with updates, reminders and offers. It lands on the lock screen, not in a spam folder.</p></div>
-      <div class="feat"><div class="ic">&#128197;</div><h3>Hours, bookings &amp; schedules</h3><p>Show who is open and staffed right now, and make it easy to book or contact you in one tap.</p></div>
-      <div class="feat"><div class="ic">&#128737;</div><h3>Admin tools for the owner</h3><p>Approve members, review activity and see reports from your own phone, with every sensitive action logged.</p></div>
-      <div class="feat"><div class="ic">&#9749;</div><h3>Ordering &amp; loyalty</h3><p>Repeat-customer features for shops, cafes and local services: rewards, favorites and quick reorders.</p></div>
-      <div class="feat"><div class="ic">&#128274;</div><h3>Security from day one</h3><p>Real logins, access roles, and careful handling of personal data. This is where an IT career pays off.</p></div>
+<section id="build">
+  <div class="wrap build">
+    <div>
+      <div class="kicker">What I build</div>
+      <h2>Apps that do real work for your business</h2>
+      <p class="sub">Not a template and not a brochure. Each app is built around how your business actually runs and how your customers actually behave.</p>
+    </div>
+    <div class="build-list">
+      <div class="build-row"><div><h3>Customer sign-up &amp; accounts</h3><p>Let people join, sign in and manage their details from their phone. No paper forms, no front-desk bottleneck.</p></div></div>
+      <div class="build-row"><div><h3>Push notifications</h3><p>Reach customers directly with updates, reminders and offers. It lands on the lock screen, not in a spam folder.</p></div></div>
+      <div class="build-row"><div><h3>Hours, bookings &amp; schedules</h3><p>Show who is open and staffed right now, and make it easy to book or contact you in one tap.</p></div></div>
+      <div class="build-row"><div><h3>Admin tools for the owner</h3><p>Approve members, review activity and see reports from your own phone, with every sensitive action logged.</p></div></div>
+      <div class="build-row"><div><h3>Ordering &amp; loyalty</h3><p>Repeat-customer features for shops, cafes and local services: rewards, favorites and quick reorders.</p></div></div>
+      <div class="build-row"><div><h3>Security from day one</h3><p>Real logins, access roles, and careful handling of personal data. This is where an IT career pays off.</p></div></div>
     </div>
   </div>
 </section>
 
 <!-- WORK -->
-<section id="work">
+<section id="work" class="alt">
   <div class="wrap">
     <div class="kicker">Selected work</div>
     <h2>Apps I am building</h2>
@@ -105,27 +121,29 @@
 </section>
 
 <!-- ABOUT -->
-<section id="about" class="alt">
-  <div class="wrap about">
-    <div>
-      <div class="kicker">About</div>
-      <h2>Veteran. Infrastructure engineer. Now building apps.</h2>
-      <p>I am <b>James Dougherty</b>, a <b>US Army veteran</b> with <b>29 years in IT</b>. I started as a Windows administrator, supported web development for several years, and have spent the last 27 years supporting large <b>Fortune 500 VMware environments</b>, working across storage, databases and networking along the way. Lately that includes <b>Red Hat OpenShift</b> clusters.</p>
-      <p>All of that time I wrote PowerShell, PowerCLI, VBScript and JavaScript to streamline the daily work of big teams. That habit of finding the tedious thing and building a tool for it is what led me to phone apps.</p>
-      <p><b>Small businesses deserve the same quality big companies get.</b> A local gym, a coffee shop or a service shop can have an app that is reliable, secure and simple for customers to use, built with an operations mindset: it has to work every day, and it has to protect people's information.</p>
-      <p>RMGLabs is where that work lives. Higher ideas. Brighter solutions.</p>
-    </div>
-    <div>
-      <div class="stats">
-        <div class="stat"><b>29</b><span>Years in IT</span></div>
-        <div class="stat"><b>27</b><span>Years with VMware</span></div>
-        <div class="stat"><b>F500</b><span>Large enterprise customers supported</span></div>
-        <div class="stat"><b>US Army</b><span>Veteran</span></div>
+<section id="about">
+  <div class="wrap">
+    <div class="about-panel">
+      <div>
+        <div class="kicker">About</div>
+        <h2>Veteran. Infrastructure engineer. Now building apps.</h2>
+        <p>I am <b>James Dougherty</b>, a <b>US Army veteran</b> with <b>29 years in IT</b>. I started as a Windows administrator, supported web development for several years, and have spent the last 27 years supporting large <b>Fortune 500 VMware environments</b>, working across storage, databases and networking along the way. Lately that includes <b>Red Hat OpenShift</b> clusters.</p>
+        <p>All of that time I wrote PowerShell, PowerCLI, VBScript and JavaScript to streamline the daily work of big teams. That habit of finding the tedious thing and building a tool for it is what led me to phone apps.</p>
+        <p><b>Small businesses deserve the same quality big companies get.</b> A local gym, a coffee shop or a service shop can have an app that is reliable, secure and simple for customers to use, built with an operations mindset: it has to work every day, and it has to protect people's information.</p>
+        <p>RMGLabs is where that work lives. Higher ideas. Brighter solutions.</p>
       </div>
-      <div class="skills">
-        <h4>Tools of the trade</h4>
-        <div class="tags">
-          <span class="tag">React Native</span><span class="tag">Expo</span><span class="tag">TypeScript</span><span class="tag">JavaScript</span><span class="tag">Supabase</span><span class="tag">PowerShell</span><span class="tag">PowerCLI</span><span class="tag">VMware</span><span class="tag">OpenShift</span><span class="tag">Storage</span><span class="tag">Databases</span><span class="tag">Networking</span>
+      <div>
+        <div class="stats">
+          <div class="stat"><b>29</b><span>Years in IT</span></div>
+          <div class="stat"><b>27</b><span>Years with VMware</span></div>
+          <div class="stat"><b>F500</b><span>Large enterprise customers supported</span></div>
+          <div class="stat"><b>US Army</b><span>Veteran</span></div>
+        </div>
+        <div class="skills">
+          <h4>Tools of the trade</h4>
+          <div class="tags">
+            <span class="tag">React Native</span><span class="tag">Expo</span><span class="tag">TypeScript</span><span class="tag">JavaScript</span><span class="tag">Supabase</span><span class="tag">PowerShell</span><span class="tag">PowerCLI</span><span class="tag">VMware</span><span class="tag">OpenShift</span><span class="tag">Storage</span><span class="tag">Databases</span><span class="tag">Networking</span>
+          </div>
         </div>
       </div>
     </div>
@@ -133,7 +151,7 @@
 </section>
 
 <!-- PROCESS -->
-<section id="process">
+<section id="process" class="alt">
   <div class="wrap">
     <div class="kicker">How it works</div>
     <h2>From idea to the app store</h2>
@@ -148,7 +166,7 @@
 </section>
 
 <!-- CONTACT -->
-<section id="contact" class="alt">
+<section id="contact">
   <div class="wrap contact">
     <div>
       <div class="kicker">Contact</div>
@@ -179,6 +197,14 @@
   </div>
 </footer>
 
-<script>document.getElementById('yr').textContent = new Date().getFullYear();</script>
+<script>
+document.getElementById('yr').textContent = new Date().getFullYear();
+(function(){
+  var b=document.querySelector('.menu-btn'), n=document.getElementById('site-nav');
+  if(!b||!n) return;
+  b.addEventListener('click',function(){var o=n.classList.toggle('open');b.setAttribute('aria-expanded',o?'true':'false');});
+  n.addEventListener('click',function(e){if(e.target.tagName==='A'){n.classList.remove('open');b.setAttribute('aria-expanded','false');}});
+})();
+</script>
 </body>
 </html>
