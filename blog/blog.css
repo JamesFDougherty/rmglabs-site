@@ -12,8 +12,8 @@
 .home .blog-hero .post-meta{color:#b4bdd0}
 .home .blog-list{padding:36px 0 84px}
 .home .post-body{padding:40px 0 84px}
-.home .post-card{color:var(--text);background:rgba(255,255,255,.9);border-color:var(--line);box-shadow:0 12px 30px rgba(15,26,43,.06)}
-.home .post-card:hover{border-color:var(--blue);text-decoration:none}
+.home .post-card{color:var(--text);background:linear-gradient(135deg,#ffffff 0%,#eaf2fd 55%,#d6e6fb 100%);border-color:#c9d9ee;box-shadow:0 12px 30px rgba(31,111,224,.10)}
+.home .post-card:hover{border-color:var(--blue);text-decoration:none;box-shadow:0 16px 36px rgba(31,111,224,.18)}
 .home .post-card h2{font-size:1.5rem;line-height:1.2}
 .home .post-card .more{color:var(--blue2)}
 .home .post h2{font-size:1.6rem;line-height:1.25}
