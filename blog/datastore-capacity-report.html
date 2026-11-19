@@ -61,7 +61,7 @@
       <p>The script connects to vCenter, reads every datastore, works out the percentage of free space and writes a CSV file sorted from fullest to emptiest. Anything below a threshold you choose is flagged, so the rows that need attention are easy to spot. It only reads information, so it is safe to run at any time, including during business hours.</p>
 
       <h2>Before You Run It</h2>
-      <p>You need the VMware PowerCLI module installed and a vCenter account that can view datastores; a read-only role is enough. The script loads saved credentials from the file named in the <code>SL_CRED_FILE</code> environment variable and only reads that file. Create the credential file once, outside the script, so no passwords ever appear in the code.</p>
+      <p>You need the VMware PowerCLI module installed and a vCenter account that can view datastores; a read-only role is enough. There is nothing else to set up: copy the script, run it, and PowerCLI prompts you for your vCenter username and password. No passwords are stored in the script or in any file.</p>
 
       <h2>The Script</h2>
       <pre><code>&lt;#
@@ -77,7 +77,7 @@ Version: 1.0
 Updated: 2026-11-19
 Category: VMware
 Requires: VMware PowerCLI
-Credentials: Saved credential file at $env:SL_CRED_FILE (read only)
+Credentials: Prompts for your vCenter username and password when it runs
 Output: CSV report
 .PARAMETER Server
 vCenter server name or address.
@@ -94,8 +94,8 @@ param(
     [string]$OutFile = ".\datastore-capacity.csv"
 )
 
-$cred = Import-Clixml -Path $env:SL_CRED_FILE
-Connect-VIServer -Server $Server -Credential $cred | Out-Null
+# No credentials are stored in this script: PowerCLI asks for them.
+Connect-VIServer -Server $Server | Out-Null
 
 $report = Get-Datastore | ForEach-Object {
     $pctFree = [math]::Round(($_.FreeSpaceGB / $_.CapacityGB) * 100, 1)

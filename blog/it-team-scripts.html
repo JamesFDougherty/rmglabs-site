@@ -81,7 +81,7 @@ Version: 1.0
 Updated: 2026-11-17
 Category: VMware
 Requires: VMware PowerCLI
-Credentials: Saved credential file at $env:SL_CRED_FILE (read only)
+Credentials: Prompts for your vCenter username and password when it runs
 Output: CSV report
 .PARAMETER Server
 vCenter server name or address.
@@ -98,8 +98,8 @@ param(
     [string]$OutFile = ".\old-snapshots.csv"
 )
 
-$cred = Import-Clixml -Path $env:SL_CRED_FILE
-Connect-VIServer -Server $Server -Credential $cred | Out-Null
+# No credentials are stored in this script: PowerCLI asks for them.
+Connect-VIServer -Server $Server | Out-Null
 
 $cutoff = (Get-Date).AddDays(-$OlderThanDays)
 Get-VM | Get-Snapshot |
@@ -109,11 +109,12 @@ Get-VM | Get-Snapshot |
     Export-Csv -Path $OutFile -NoTypeInformation
 
 Disconnect-VIServer -Server $Server -Confirm:$false</code></pre>
+      <p>To try it, copy the script, save it as <code>Get-OldSnapshotReport.ps1</code> and run it. PowerCLI will prompt you for your vCenter username and password, so there is nothing to configure first. (For a scheduled, unattended run you would later add a saved credential, but the prompt is the simplest way to start.)</p>
       <p>Schedule it to run each morning and you have a daily snapshot check with no clicking at all. If you later add a cleanup step that removes snapshots, build it with <code>-WhatIf</code> support so you can preview the changes before anything is deleted.</p>
 
       <h2>Friendly Graphical Interfaces</h2>
       <p>Not everyone on a team wants to learn PowerShell and PowerCLI commands, and that is perfectly fine. Scripts can be wrapped in a simple point-and-click window, for example with Windows Forms or WPF in PowerShell, so a teammate just picks an option and clicks a button. The logic stays in the reviewed script; the window is only a friendly front door. That means people can run approved, safe tasks without typing commands, and the team keeps one trusted version of each task.</p>
-      <p>Here is a tiny Windows Forms example that runs the report above:</p>
+      <p>Here is a tiny Windows Forms example that runs the report above. Save it in the same folder as the report script; the vCenter login prompt appears when you click the button.</p>
       <pre><code>&lt;#
 .SYNOPSIS
 Small point-and-click front end for the snapshot report.
@@ -126,7 +127,7 @@ Version: 1.0
 Updated: 2026-11-17
 Category: VMware
 Requires: Windows PowerShell, VMware PowerCLI
-Credentials: Handled by the called script via $env:SL_CRED_FILE
+Credentials: The called script prompts for your vCenter username and password
 Output: CSV report
 .PARAMETER Server
 vCenter server name or address.
