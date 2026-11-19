@@ -18,16 +18,27 @@
 <link rel="icon" href="../assets/brand/icons/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="../assets/brand/icons/apple-touch-icon.png">
 <link rel="manifest" href="../assets/brand/site.webmanifest">
-<meta name="theme-color" content="#14161c">
+<meta name="theme-color" content="#f4f7fb">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../styles.css">
+<link rel="stylesheet" href="../home.css">
+<link rel="stylesheet" href="blog.css">
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"BlogPosting","headline":"Why Mobile Apps Are a Game-Changer for Small Businesses","datePublished":"2026-11-16","author":{"@type":"Organization","name":"RMG Labs"},"publisher":{"@type":"Organization","name":"RMG Labs"},"mainEntityOfPage":"https://rmglabs.net/blog/mobile-apps-game-changer-small-businesses.html","image":"https://rmglabs.net/assets/brand/social/og-image.png"}
 </script>
 </head>
-<body>
+<body class="home">
 <header class="nav"><div class="wrap">
-  <a class="brand" href="../index.html"><img src="../assets/brand/logo/svg/rmg-labs-logo-notagline-dark.svg" alt="RMG Labs" height="46"></a>
-  <nav><a href="../index.html#build">What I build</a><a href="../projects/">Projects</a><a href="../index.html#about">About</a><a href="../blog/">Blog</a><a href="../index.html#contact" class="pill">Contact</a></nav>
+  <a class="logo" href="../index.html" aria-label="RMG Labs home">
+    <svg class="peak" viewBox="0 0 40 38" aria-hidden="true"><polygon points="2,36 18,3 28,22 20,36" fill="#3f9dfd"/><polygon points="18,3 38,36 24,36 20,22" fill="#1f56d6"/></svg>
+    <span class="word"><span class="rmg">RMG</span> <span class="labs">LABS</span></span>
+  </a>
+  <button class="menu-btn" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="site-nav">
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+  </button>
+  <nav id="site-nav"><a href="../index.html#build">What I build</a><a href="../projects/">Projects</a><a href="../index.html#about">About</a><a href="../blog/">Blog</a><a href="../index.html#contact" class="pill">Contact</a></nav>
 </div></header>
 
 <main>
@@ -104,6 +115,7 @@
   <div>&copy; <span id="yr">2026</span> RMGLabs &middot; <span class="tagline">Higher ideas. Brighter solutions.</span></div>
   <div><a href="../projects/">Projects</a><a href="./">Blog</a><a href="../privacy.html">Privacy</a><a href="../support.html">Support</a></div>
 </div></footer>
-<script>document.getElementById("yr").textContent = new Date().getFullYear();</script>
+<script>document.getElementById("yr").textContent = new Date().getFullYear();
+(function(){var b=document.querySelector(".menu-btn"),n=document.getElementById("site-nav");if(!b||!n)return;b.addEventListener("click",function(){var o=n.classList.toggle("open");b.setAttribute("aria-expanded",o?"true":"false");});n.addEventListener("click",function(e){if(e.target.tagName==="A"){n.classList.remove("open");b.setAttribute("aria-expanded","false");}});})();</script>
 </body>
 </html>

@@ -1,0 +1,20 @@
+/* RMGLabs blog: light "Topo Daylight" theme. Load after ../styles.css and ../home.css; body must have class="home". */
+.home .blog-hero,.home .proj-hero{padding:56px 0 24px;background:radial-gradient(900px 420px at 78% 0%,rgba(63,157,253,.16),transparent 70%),radial-gradient(700px 380px at 6% 40%,rgba(124,192,255,.12),transparent 70%)}
+.home .blog-hero h1{font-size:clamp(2rem,4.2vw,3.2rem);line-height:1.08;max-width:20em;margin:14px 0 8px}
+.home .blog-list{padding:36px 0 84px}
+.home .post-body{padding:40px 0 84px}
+.home .post-card{color:var(--text);background:rgba(255,255,255,.9);border-color:var(--line);box-shadow:0 12px 30px rgba(15,26,43,.06)}
+.home .post-card:hover{border-color:var(--blue);text-decoration:none}
+.home .post-card h2{font-size:1.5rem;line-height:1.2}
+.home .post-card .more{color:var(--blue2)}
+.home .post h2{font-size:1.6rem;line-height:1.25}
+.home .post p,.home .post li{color:var(--muted)}
+.home .post strong{color:var(--text)}
+.home .post-cta{background:#fff;border-color:var(--line);box-shadow:0 12px 30px rgba(15,26,43,.06)}
+.home .post-cta p{color:var(--muted)}
+.home .author p{color:var(--muted)}
+.home .post pre{background:#0f1a2b;color:#e6edf8;border:1px solid #2c3850;border-radius:12px;padding:16px 18px;overflow-x:auto;font-size:.88rem;line-height:1.5;margin:0 0 18px}
+.home .post code{font-family:ui-monospace,Menlo,Consolas,monospace}
+.home .post p code,.home .post li code{background:#e9eff8;color:#0f1a2b;border-radius:6px;padding:1px 6px;font-size:.9em}
+.home .post pre code{background:none;padding:0;color:inherit}
+@media(max-width:860px){.home .blog-hero{padding:34px 0 16px}.home .blog-list,.home .post-body{padding:28px 0 56px}}
