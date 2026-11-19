@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Build a Datastore Capacity Report with PowerCLI | RMGLabs</title>
+<meta name="description" content="A short, read-only PowerCLI script that lists every VMware datastore, how full it is and which ones need attention, with tips for scheduling it.">
+<link rel="canonical" href="https://rmglabs.net/blog/datastore-capacity-report.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Build a Datastore Capacity Report with PowerCLI">
+<meta property="og:description" content="A read-only PowerCLI how-to for spotting datastores that are running low on space before they cause trouble.">
+<meta property="og:url" content="https://rmglabs.net/blog/datastore-capacity-report.html">
+<meta property="og:image" content="https://rmglabs.net/assets/brand/social/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../assets/brand/icons/favicon.ico" sizes="48x48">
+<link rel="icon" href="../assets/brand/icons/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../assets/brand/icons/apple-touch-icon.png">
+<link rel="manifest" href="../assets/brand/site.webmanifest">
+<meta name="theme-color" content="#f4f7fb">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../styles.css">
+<link rel="stylesheet" href="../home.css">
+<link rel="stylesheet" href="blog.css?v=7">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","headline":"Build a Datastore Capacity Report with PowerCLI","datePublished":"2026-11-19","author":{"@type":"Organization","name":"RMG Labs"},"publisher":{"@type":"Organization","name":"RMG Labs"},"mainEntityOfPage":"https://rmglabs.net/blog/datastore-capacity-report.html","image":"https://rmglabs.net/assets/brand/social/og-image.png"}
+</script>
+</head>
+<body class="home">
+<header class="nav"><div class="wrap">
+  <a class="logo" href="../index.html" aria-label="RMG Labs home">
+    <svg class="peak" viewBox="0 0 40 38" aria-hidden="true"><polygon points="2,36 18,3 28,22 20,36" fill="#3f9dfd"/><polygon points="18,3 38,36 24,36 20,22" fill="#1f56d6"/></svg>
+    <span class="word"><span class="rmg">RMG</span> <span class="labs">LABS</span></span>
+  </a>
+  <button class="menu-btn" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="site-nav">
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+  </button>
+  <nav id="site-nav"><a href="../index.html#build">What I build</a><a href="../projects/">Projects</a><a href="../index.html#about">About</a><a href="../blog/">Blog</a><a href="../index.html#contact" class="pill">Contact</a></nav>
+</div></header>
+
+<main>
+<img class="hero-bg" src="../assets/topo.svg" alt="" aria-hidden="true" width="1440" height="1060">
+<section class="blog-hero">
+  <div class="wrap">
+    <a class="back" href="./">&larr; All articles</a>
+    <div class="eyebrow">VMware scripting &middot; How-to</div>
+    <h1>Build a Datastore Capacity Report with PowerCLI</h1>
+    <div class="post-meta"><span>By RMG Labs</span><span>November 19, 2026</span><span>4 min read</span></div>
+  </div>
+</section>
+
+<section class="post-body">
+  <div class="wrap">
+    <article class="post">
+      <p>A datastore that quietly fills up is one of the more stressful surprises in a VMware environment. Virtual machines pause, snapshots refuse to grow and the phone starts ringing. The fix for the surprise is boring and effective: look at capacity every day, before it becomes urgent. This how-to builds a small PowerCLI report that does exactly that, and it never changes anything.</p>
+
+      <h2>What the Report Does</h2>
+      <p>The script connects to vCenter, reads every datastore, works out the percentage of free space and writes a CSV file sorted from fullest to emptiest. Anything below a threshold you choose is flagged, so the rows that need attention are easy to spot. It only reads information, so it is safe to run at any time, including during business hours.</p>
+
+      <h2>Before You Run It</h2>
+      <p>You need the VMware PowerCLI module installed and a vCenter account that can view datastores; a read-only role is enough. The script loads saved credentials from the file named in the <code>SL_CRED_FILE</code> environment variable and only reads that file. Create the credential file once, outside the script, so no passwords ever appear in the code.</p>
+
+      <h2>The Script</h2>
+      <pre><code>&lt;#
+.SYNOPSIS
+Reports datastore capacity and flags datastores running low on space.
+.DESCRIPTION
+Connects to vCenter, reads every datastore, calculates percent free
+and writes a CSV sorted from fullest to emptiest. Read-only: nothing
+is changed.
+.NOTES
+Author: James Dougherty (scripty)
+Version: 1.0
+Updated: 2026-11-19
+Category: VMware
+Requires: VMware PowerCLI
+Credentials: Saved credential file at $env:SL_CRED_FILE (read only)
+Output: CSV report
+.PARAMETER Server
+vCenter server name or address.
+.PARAMETER WarnPercentFree
+Datastores with less free space than this percentage are flagged.
+.PARAMETER OutFile
+Path of the CSV report to write.
+.EXAMPLE
+.\Get-DatastoreCapacityReport.ps1 -Server vcenter.example.local -WarnPercentFree 20
+#&gt;
+param(
+    [Parameter(Mandatory)][string]$Server,
+    [int]$WarnPercentFree = 20,
+    [string]$OutFile = ".\datastore-capacity.csv"
+)
+
+$cred = Import-Clixml -Path $env:SL_CRED_FILE
+Connect-VIServer -Server $Server -Credential $cred | Out-Null
+
+$report = Get-Datastore | ForEach-Object {
+    $pctFree = [math]::Round(($_.FreeSpaceGB / $_.CapacityGB) * 100, 1)
+    [pscustomobject]@{
+        Datastore   = $_.Name
+        CapacityGB  = [math]::Round($_.CapacityGB, 1)
+        FreeGB      = [math]::Round($_.FreeSpaceGB, 1)
+        PercentFree = $pctFree
+        Status      = if ($pctFree -lt $WarnPercentFree) { "LOW" } else { "OK" }
+    }
+} | Sort-Object PercentFree
+
+$report | Export-Csv -Path $OutFile -NoTypeInformation
+$report | Format-Table -AutoSize
+
+Disconnect-VIServer -Server $Server -Confirm:$false</code></pre>
+
+      <h2>How It Works</h2>
+      <p><code>Get-Datastore</code> returns each datastore with its capacity and free space in gigabytes. The script turns those two numbers into a percentage, labels each datastore <code>LOW</code> or <code>OK</code>, and sorts so the tightest datastores appear first. The same results go to the screen and to a CSV file, which opens cleanly in Excel for sharing with the team.</p>
+
+      <h2>Making It a Daily Habit</h2>
+      <p>A report you have to remember to run is only half useful. Schedule the script with Windows Task Scheduler on a management server, point it at a shared folder, and have it run each morning. From there you can add an email step that sends only the rows marked <code>LOW</code>, so a quiet inbox means everything is healthy.</p>
+      <p>A few practical tips:</p>
+      <ul>
+        <li>Pick a threshold that matches how fast your datastores grow. A busy datastore may need a warning at 25 percent free, while a quiet archive can wait until 10.</li>
+        <li>Keep the CSV files for a few weeks. Comparing them shows which datastores are trending toward full, which is more useful than a single snapshot in time.</li>
+        <li>Pair this with the snapshot report from our earlier article. Old snapshots are a common reason datastores fill up.</li>
+      </ul>
+
+      <h2>Where to Go Next</h2>
+      <p>Once the report is trusted, a friendly front end is a natural next step: a small window where a teammate enters the vCenter name, clicks a button and gets the report. The logic stays in the reviewed script, and anyone on the team can run it. If you ever add a step that changes something, such as moving a VM, build it with <code>-WhatIf</code> support so the change can be previewed first.</p>
+      <p>Read-only scripts like this one are an easy, low-risk way to start automating. They build confidence, save time and make capacity a routine check instead of an emergency.</p>
+
+      <div class="post-cta">
+        <h3>Want help automating your IT routines?</h3>
+        <p>Tell me which tasks eat up your team's time. I will reply personally.</p>
+        <div class="cta"><a class="btn primary" href="../index.html#contact">Start a conversation</a></div>
+      </div>
+
+      <div class="author">
+        <h4>Author Bio</h4>
+        <p>RMG Labs builds custom apps and practical automation, helping small businesses and IT teams save time, reduce errors and get more done.</p>
+      </div>
+    </article>
+  </div>
+</section>
+</main>
+
+<footer><div class="wrap">
+  <div>&copy; <span id="yr">2026</span> RMGLabs &middot; <span class="tagline">Higher ideas. Brighter solutions.</span></div>
+  <div><a href="../projects/">Projects</a><a href="./">Blog</a><a href="../privacy.html">Privacy</a><a href="../support.html">Support</a></div>
+</div></footer>
+<script>document.getElementById("yr").textContent = new Date().getFullYear();
+(function(){var b=document.querySelector(".menu-btn"),n=document.getElementById("site-nav");if(!b||!n)return;b.addEventListener("click",function(){var o=n.classList.toggle("open");b.setAttribute("aria-expanded",o?"true":"false");});n.addEventListener("click",function(e){if(e.target.tagName==="A"){n.classList.remove("open");b.setAttribute("aria-expanded","false");}});})();</script>
+</body>
+</html>
