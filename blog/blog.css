@@ -33,3 +33,8 @@
 .home .post p code,.home .post li code{background:#e9eff8;color:#0f1a2b;border-radius:6px;padding:1px 6px;font-size:.9em}
 .home .post pre code{background:none;padding:0;color:inherit}
 @media(max-width:860px){.home .blog-hero{padding:20px 0 8px}.home .blog-hero .wrap{padding:30px 24px;border-radius:26px}.home .post-cta{padding:28px 24px}.home .blog-list,.home .post-body{padding:28px 0 56px}}
+
+/* topographic contour background (same asset as the homepage hero) */
+.home main{position:relative;overflow:hidden}
+.home main>section{position:relative;z-index:1}
+.home main>.hero-bg{opacity:.65;object-position:75% 0}
