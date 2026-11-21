@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Get-VM or Get-View? Choosing the Right PowerCLI Cmdlet | RMGLabs</title>
+<meta name="description" content="When to use Get-VM, when Get-View is worth the extra effort, and a read-only PowerCLI script that times both on your own inventory.">
+<link rel="canonical" href="https://rmglabs.net/blog/get-vm-vs-get-view.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Get-VM or Get-View? Choosing the Right PowerCLI Cmdlet">
+<meta property="og:description" content="Friendly and slower, or lean and fast? A practical PowerCLI comparison with a read-only example of each.">
+<meta property="og:url" content="https://rmglabs.net/blog/get-vm-vs-get-view.html">
+<meta property="og:image" content="https://rmglabs.net/assets/brand/social/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../assets/brand/icons/favicon.ico" sizes="48x48">
+<link rel="icon" href="../assets/brand/icons/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../assets/brand/icons/apple-touch-icon.png">
+<link rel="manifest" href="../assets/brand/site.webmanifest">
+<meta name="theme-color" content="#f4f7fb">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../styles.css">
+<link rel="stylesheet" href="../home.css">
+<link rel="stylesheet" href="blog.css?v=7">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","headline":"Get-VM or Get-View? Choosing the Right PowerCLI Cmdlet","datePublished":"2026-11-21","author":{"@type":"Organization","name":"RMG Labs"},"publisher":{"@type":"Organization","name":"RMG Labs"},"mainEntityOfPage":"https://rmglabs.net/blog/get-vm-vs-get-view.html","image":"https://rmglabs.net/assets/brand/social/og-image.png"}
+</script>
+</head>
+<body class="home">
+<header class="nav"><div class="wrap">
+  <a class="logo" href="../index.html" aria-label="RMG Labs home">
+    <svg class="peak" viewBox="0 0 40 38" aria-hidden="true"><polygon points="2,36 18,3 28,22 20,36" fill="#3f9dfd"/><polygon points="18,3 38,36 24,36 20,22" fill="#1f56d6"/></svg>
+    <span class="word"><span class="rmg">RMG</span> <span class="labs">LABS</span></span>
+  </a>
+  <button class="menu-btn" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="site-nav">
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+  </button>
+  <nav id="site-nav"><a href="../index.html#build">What I build</a><a href="../projects/">Projects</a><a href="../index.html#about">About</a><a href="../blog/">Blog</a><a href="../index.html#contact" class="pill">Contact</a></nav>
+</div></header>
+
+<main>
+<img class="hero-bg" src="../assets/topo.svg" alt="" aria-hidden="true" width="1440" height="1060">
+<section class="blog-hero">
+  <div class="wrap">
+    <a class="back" href="./">&larr; All articles</a>
+    <div class="eyebrow">VMware scripting &middot; Comparison</div>
+    <h1>Get-VM or Get-View? Choosing the Right PowerCLI Cmdlet</h1>
+    <div class="post-meta"><span>By RMG Labs</span><span>November 21, 2026</span><span>5 min read</span></div>
+  </div>
+</section>
+
+<section class="post-body">
+  <div class="wrap">
+    <article class="post">
+      <p>Sooner or later every PowerCLI user meets the same question: should this report use <code>Get-VM</code> or <code>Get-View</code>? Both list virtual machines, and on a small lab they feel identical. On an inventory with thousands of VMs the difference can be the gap between a script that finishes while you pour coffee and one that you leave running over lunch. This article explains what each cmdlet does, when to pick it and how to measure the difference yourself.</p>
+
+      <h2>What Get-VM Gives You</h2>
+      <p><code>Get-VM</code> is the friendly option. It returns PowerCLI VirtualMachine objects with tidy, easy-to-read properties such as <code>Name</code>, <code>PowerState</code>, <code>NumCpu</code>, <code>MemoryGB</code>, <code>VMHost</code> and <code>ProvisionedSpaceGB</code>. Those objects also plug straight into the rest of PowerCLI, so you can pipe them into <code>Get-Snapshot</code>, <code>Get-HardDisk</code>, <code>Get-Tag</code> or <code>Stop-VM</code> without thinking about it. For everyday tasks, a few dozen VMs and anything that changes a VM afterwards, <code>Get-VM</code> is the right and most readable choice.</p>
+
+      <h2>What Get-View Gives You</h2>
+      <p><code>Get-View</code> returns the raw vSphere API object behind the VM. Its property names are the official API names, such as <code>Runtime.PowerState</code>, <code>Config.Hardware.NumCPU</code> and <code>Config.Hardware.MemoryMB</code>, and its values are less polished: power state comes back as <code>poweredOn</code>, memory in megabytes. The reward is control. You choose exactly which properties to fetch with <code>-Property</code> and which objects to return with <code>-Filter</code>, so vCenter does the narrowing and you only transfer the data you need.</p>
+
+      <h2>Why the Speed Differs</h2>
+      <p><code>Get-VM</code> builds a rich object for every VM and works out many convenience properties for you. <code>Get-View</code> with a short property list skips most of that. When you only need a handful of fields from a large inventory, asking for just those fields is usually much faster and lighter on vCenter. Exact timings depend on your environment, so measure rather than assume. The script below does that for you.</p>
+
+      <h2>Try Both Side by Side</h2>
+      <p>This read-only script runs the same simple VM listing both ways, times each and shows a few rows from each. You need the VMware PowerCLI module and a vCenter account with read access. PowerCLI prompts for your username and password, and nothing is stored.</p>
+      <pre><code>&lt;#
+.SYNOPSIS
+Times Get-VM against Get-View for a basic VM inventory.
+.DESCRIPTION
+Lists name, power state, vCPU count and memory for every VM twice,
+once with Get-VM and once with Get-View, and shows how long each
+took. Read-only: nothing is changed.
+.NOTES
+Author: James Dougherty (scripty)
+Version: 1.0
+Updated: 2026-11-21
+Category: VMware
+Requires: VMware PowerCLI
+Credentials: Prompts for your vCenter username and password when it runs
+Output: Timing table and sample rows on screen
+.PARAMETER Server
+vCenter server name or address.
+.PARAMETER Top
+How many sample rows to show from each method.
+.EXAMPLE
+.\Compare-VmQuerySpeed.ps1 -Server vcenter.example.local -Top 5
+#&gt;
+param(
+    [Parameter(Mandatory)][string]$Server,
+    [int]$Top = 5
+)
+
+# No credentials are stored in this script: PowerCLI asks for them.
+Connect-VIServer -Server $Server | Out-Null
+
+# Method 1: Get-VM (friendly objects, more work per VM)
+$t1 = Measure-Command {
+    $script:viaVm = Get-VM | ForEach-Object {
+        [pscustomobject]@{
+            Name       = $_.Name
+            PowerState = [string]$_.PowerState
+            NumCpu     = $_.NumCpu
+            MemoryGB   = [math]::Round($_.MemoryGB, 1)
+        }
+    }
+}
+
+# Method 2: Get-View (only the properties we ask for; templates excluded)
+$t2 = Measure-Command {
+    $script:viaView = Get-View -ViewType VirtualMachine `
+        -Property Name, Runtime.PowerState, Config.Hardware.NumCPU, Config.Hardware.MemoryMB `
+        -Filter @{ "Config.Template" = "false" } | ForEach-Object {
+        [pscustomobject]@{
+            Name       = $_.Name
+            PowerState = [string]$_.Runtime.PowerState
+            NumCpu     = $_.Config.Hardware.NumCPU
+            MemoryGB   = [math]::Round($_.Config.Hardware.MemoryMB / 1024, 1)
+        }
+    }
+}
+
+[pscustomobject]@{ Method = "Get-VM";   Seconds = [math]::Round($t1.TotalSeconds, 1); VMs = @($viaVm).Count },
+[pscustomobject]@{ Method = "Get-View"; Seconds = [math]::Round($t2.TotalSeconds, 1); VMs = @($viaView).Count } |
+    Format-Table -AutoSize
+
+"--- Get-VM sample ---"
+$viaVm | Select-Object -First $Top | Format-Table -AutoSize
+"--- Get-View sample ---"
+$viaView | Select-Object -First $Top | Format-Table -AutoSize
+
+Disconnect-VIServer -Server $Server -Confirm:$false</code></pre>
+
+      <h2>Reading the Results</h2>
+      <p>Both methods should report the same VM count and similar values; only the speed and the raw formatting differ. Notice the small clean-up the <code>Get-View</code> branch needs: the power state is a plain string such as <code>poweredOn</code>, memory is converted from megabytes, and templates are excluded with a filter because <code>Get-View</code> returns them while <code>Get-VM</code> does not. On a small lab the timings may be close. Run it against production, or the largest vCenter you can safely read from, to see where the gap opens up.</p>
+
+      <h2>Common Properties to Know</h2>
+      <p>A few useful <code>Get-View</code> property paths for VMs: <code>Runtime.PowerState</code> for power state, <code>Config.GuestFullName</code> for the configured guest operating system, <code>Config.Hardware.NumCPU</code> and <code>Config.Hardware.MemoryMB</code> for sizing, and <code>Guest.ToolsStatus</code> for VMware Tools health. On the <code>Get-VM</code> side, look at <code>PowerState</code>, <code>NumCpu</code>, <code>MemoryGB</code>, <code>VMHost</code>, <code>Folder</code> and <code>ProvisionedSpaceGB</code>. Run <code>Get-VM | Get-Member</code> or <code>Get-View -ViewType VirtualMachine | Get-Member</code> to browse everything else.</p>
+
+      <h2>A Simple Rule of Thumb</h2>
+      <p>Use <code>Get-VM</code> when readability matters, the inventory is modest or you plan to pipe the result into another PowerCLI cmdlet. Reach for <code>Get-View</code> when you are building a read-only report over a large inventory and only need a few properties. A handy middle path is to find objects with <code>Get-View</code> and convert only the ones you need with <code>Get-VIObjectByVIView</code> when you must act on them. If any step changes a VM, use <code>-WhatIf</code> first so the change can be previewed. For a complete read-only example in the same spirit, see our <a href="datastore-capacity-report.html">datastore capacity report</a>.</p>
+
+      <div class="post-cta">
+        <h3>Want help automating your IT routines?</h3>
+        <p>Tell me which tasks eat up your team's time. I will reply personally.</p>
+        <div class="cta"><a class="btn primary" href="../index.html#contact">Start a conversation</a></div>
+      </div>
+
+      <div class="author">
+        <h4>Author Bio</h4>
+        <p>RMG Labs builds custom apps and practical automation, helping small businesses and IT teams save time, reduce errors and get more done.</p>
+      </div>
+    </article>
+  </div>
+</section>
+</main>
+
+<footer><div class="wrap">
+  <div>&copy; <span id="yr">2026</span> RMGLabs &middot; <span class="tagline">Higher ideas. Brighter solutions.</span></div>
+  <div><a href="../projects/">Projects</a><a href="./">Blog</a><a href="../privacy.html">Privacy</a><a href="../support.html">Support</a></div>
+</div></footer>
+<script>document.getElementById("yr").textContent = new Date().getFullYear();
+(function(){var b=document.querySelector(".menu-btn"),n=document.getElementById("site-nav");if(!b||!n)return;b.addEventListener("click",function(){var o=n.classList.toggle("open");b.setAttribute("aria-expanded",o?"true":"false");});n.addEventListener("click",function(e){if(e.target.tagName==="A"){n.classList.remove("open");b.setAttribute("aria-expanded","false");}});})();</script>
+</body>
+</html>
