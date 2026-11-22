@@ -38,3 +38,8 @@
 .home main{position:relative;overflow:hidden}
 .home main>section{position:relative;z-index:1}
 .home main>.hero-bg{opacity:.65;object-position:75% 0}
+
+/* sample-run videos inside posts */
+.home .demo{margin:26px 0 30px}
+.home .demo video{display:block;width:100%;height:auto;border-radius:14px;background:#0f1a2b;box-shadow:0 14px 34px rgba(15,26,43,.22)}
+.home .demo figcaption{margin-top:10px;font-size:.9rem;color:var(--muted);text-align:center}

@@ -1,0 +1,95 @@
+{
+ "title": "Windows PowerShell",
+ "badge": "SAMPLE OUTPUT  |  simulated lab data",
+ "prompt": "PS C:\\Scripts> ",
+ "steps": [
+  {
+   "type": "prompt",
+   "cap": "1. Run the report script"
+  },
+  {
+   "type": "wait",
+   "dur": 700
+  },
+  {
+   "type": "type",
+   "text": ".\\Get-OldSnapshotReport.ps1 -Server vcenter.example.local -OlderThanDays 7",
+   "dur": 2800
+  },
+  {
+   "type": "wait",
+   "dur": 600
+  },
+  {
+   "type": "dialog",
+   "user": "svc-readonly@example.local",
+   "pw": 12,
+   "dur": 5200,
+   "cap": "2. PowerCLI asks for your vCenter login (nothing is saved in the script)"
+  },
+  {
+   "type": "wait",
+   "dur": 3200,
+   "cap": "3. It reads vCenter and writes the CSV - read-only, nothing is changed"
+  },
+  {
+   "type": "prompt",
+   "cap": "4. Open the report"
+  },
+  {
+   "type": "wait",
+   "dur": 700
+  },
+  {
+   "type": "type",
+   "text": "Import-Csv .\\old-snapshots.csv | Format-Table -AutoSize",
+   "dur": 2000
+  },
+  {
+   "type": "wait",
+   "dur": 400
+  },
+  {
+   "type": "table",
+   "dur": 600,
+   "cols": [
+    {
+     "h": "VM"
+    },
+    {
+     "h": "Name"
+    },
+    {
+     "h": "Created"
+    },
+    {
+     "h": "SizeGB"
+    }
+   ],
+   "rows": [
+    [
+     "FS-02",
+     "Pre-upgrade",
+     "10/9/2026 10:15:32 AM",
+     "118.2041015625"
+    ],
+    [
+     "APP-SQL01",
+     "Before patching",
+     "10/28/2026 9:41:55 AM",
+     "42.7314453125"
+    ],
+    [
+     "WEB-03",
+     "Test config change",
+     "11/6/2026 4:12:08 PM",
+     "6.0498046875"
+    ]
+   ]
+  },
+  {
+   "type": "wait",
+   "dur": 4500
+  }
+ ]
+}

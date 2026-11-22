@@ -1,0 +1,132 @@
+{
+ "title": "Windows PowerShell",
+ "badge": "SAMPLE OUTPUT  |  simulated lab data",
+ "prompt": "PS C:\\Scripts> ",
+ "steps": [
+  {
+   "type": "prompt",
+   "cap": "1. Run the capacity report"
+  },
+  {
+   "type": "wait",
+   "dur": 700
+  },
+  {
+   "type": "type",
+   "text": ".\\Get-DatastoreCapacityReport.ps1 -Server vcenter.example.local -WarnPercentFree 20",
+   "dur": 3000
+  },
+  {
+   "type": "wait",
+   "dur": 600
+  },
+  {
+   "type": "dialog",
+   "user": "svc-readonly@example.local",
+   "pw": 12,
+   "dur": 5200,
+   "cap": "2. PowerCLI asks for your vCenter login"
+  },
+  {
+   "type": "wait",
+   "dur": 2800,
+   "cap": "3. It reads every datastore - read-only"
+  },
+  {
+   "type": "table",
+   "dur": 700,
+   "cap": "4. Fullest first. Anything under 20 percent free is flagged LOW",
+   "cols": [
+    {
+     "h": "Datastore"
+    },
+    {
+     "h": "CapacityGB",
+     "align": "r"
+    },
+    {
+     "h": "FreeGB",
+     "align": "r"
+    },
+    {
+     "h": "PercentFree",
+     "align": "r"
+    },
+    {
+     "h": "Status"
+    }
+   ],
+   "rows": [
+    [
+     "ds-prod-02",
+     "2048",
+     "163.8",
+     "8",
+     "LOW"
+    ],
+    [
+     "ds-prod-01",
+     "4096",
+     "655.4",
+     "16",
+     "LOW"
+    ],
+    [
+     "ds-vdi-01",
+     "1024",
+     "297",
+     "29",
+     "OK"
+    ],
+    [
+     "ds-backup-01",
+     "8192",
+     "3604.5",
+     "44",
+     "OK"
+    ],
+    [
+     "ds-archive-01",
+     "6144",
+     "4116.5",
+     "67",
+     "OK"
+    ]
+   ]
+  },
+  {
+   "type": "wait",
+   "dur": 3000
+  },
+  {
+   "type": "prompt",
+   "cap": "5. The same rows are in the CSV file"
+  },
+  {
+   "type": "wait",
+   "dur": 600
+  },
+  {
+   "type": "type",
+   "text": "Get-Content .\\datastore-capacity.csv -TotalCount 3",
+   "dur": 1800
+  },
+  {
+   "type": "wait",
+   "dur": 300
+  },
+  {
+   "type": "out",
+   "dur": 500,
+   "lines": [
+    "\"Datastore\",\"CapacityGB\",\"FreeGB\",\"PercentFree\",\"Status\"",
+    "\"ds-prod-02\",\"2048\",\"163.8\",\"8\",\"LOW\"",
+    "\"ds-prod-01\",\"4096\",\"655.4\",\"16\",\"LOW\""
+   ]
+  },
+  {
+   "type": "wait",
+   "dur": 4500
+  }
+ ]
+}

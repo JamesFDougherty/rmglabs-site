@@ -24,7 +24,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../styles.css">
 <link rel="stylesheet" href="../home.css">
-<link rel="stylesheet" href="blog.css?v=7">
+<link rel="stylesheet" href="blog.css?v=8">
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"BlogPosting","headline":"The Benefits of an IT Team Using Scripts","datePublished":"2026-11-17","author":{"@type":"Organization","name":"RMG Labs"},"publisher":{"@type":"Organization","name":"RMG Labs"},"mainEntityOfPage":"https://rmglabs.net/blog/it-team-scripts.html","image":"https://rmglabs.net/assets/brand/social/og-image.png"}
 </script>
@@ -110,6 +110,13 @@ Get-VM | Get-Snapshot |
 
 Disconnect-VIServer -Server $Server -Confirm:$false</code></pre>
       <p>To try it, copy the script, save it as <code>Get-OldSnapshotReport.ps1</code> and run it. PowerCLI will prompt you for your vCenter username and password, so there is nothing to configure first. (For a scheduled, unattended run you would later add a saved credential, but the prompt is the simplest way to start.)</p>
+            <figure class="demo">
+        <video controls muted playsinline preload="metadata" poster="videos/snapshot-report-run.jpg" width="1280" height="720" aria-label="Screen recording of running the old snapshot report in PowerShell">
+          <source src="videos/snapshot-report-run.mp4" type="video/mp4">
+          Your browser does not support embedded video.
+        </video>
+        <figcaption>Sample run with simulated lab data (the server name is a placeholder). Your own output will differ.</figcaption>
+      </figure>
       <p>Schedule it to run each morning and you have a daily snapshot check with no clicking at all. If you later add a cleanup step that removes snapshots, build it with <code>-WhatIf</code> support so you can preview the changes before anything is deleted.</p>
 
       <h2>Friendly Graphical Interfaces</h2>
@@ -153,6 +160,13 @@ $button.Add_Click({
 
 $form.Controls.Add($button)
 [void]$form.ShowDialog()</code></pre>
+      <figure class="demo">
+        <video controls muted playsinline preload="metadata" poster="videos/snapshot-report-gui.jpg" width="1280" height="720" aria-label="Screen recording of the point-and-click snapshot report window">
+          <source src="videos/snapshot-report-gui.mp4" type="video/mp4">
+          Your browser does not support embedded video.
+        </video>
+        <figcaption>Sample run: one button for the teammate, the reviewed script behind it. Simulated lab data and a placeholder server name.</figcaption>
+      </figure>
 
       <h2>Getting Started</h2>
       <p>Pick one task your team does every week and script just that. Keep it read-only first, review it together, and store it somewhere shared. Small, safe wins build trust quickly, and the collection of scripts grows from there.</p>

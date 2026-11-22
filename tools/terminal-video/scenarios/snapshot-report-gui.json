@@ -1,0 +1,59 @@
+{
+ "title": "Windows PowerShell",
+ "badge": "SAMPLE OUTPUT  |  simulated lab data",
+ "prompt": "PS C:\\Scripts> ",
+ "steps": [
+  {
+   "type": "prompt",
+   "cap": "1. Start the form"
+  },
+  {
+   "type": "wait",
+   "dur": 700
+  },
+  {
+   "type": "type",
+   "text": ".\\Show-SnapshotReportForm.ps1 -Server vcenter.example.local",
+   "dur": 2200
+  },
+  {
+   "type": "wait",
+   "dur": 800
+  },
+  {
+   "type": "form",
+   "title": "Snapshot Report",
+   "button": "Run report",
+   "dur": 3400,
+   "cap": "2. A teammate just clicks one button"
+  },
+  {
+   "type": "dialog",
+   "user": "svc-readonly@example.local",
+   "pw": 12,
+   "dur": 5200,
+   "cap": "3. PowerCLI asks for the vCenter login"
+  },
+  {
+   "type": "wait",
+   "dur": 2600,
+   "cap": "4. The reviewed script runs behind the scenes"
+  },
+  {
+   "type": "msgbox",
+   "text": "Report saved.",
+   "dur": 3200,
+   "cap": "5. Done - the CSV report is saved"
+  },
+  {
+   "type": "formclose"
+  },
+  {
+   "type": "prompt"
+  },
+  {
+   "type": "wait",
+   "dur": 1800
+  }
+ ]
+}
