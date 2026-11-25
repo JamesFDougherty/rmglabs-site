@@ -232,3 +232,8 @@ footer .tagline{letter-spacing:.14em;text-transform:uppercase;font-size:.75rem}
 @keyframes shot-quote-scroll{to{transform:translateX(-50%)}}
 @media(max-width:860px){.shot-anim{--h:380px}}
 @media(prefers-reduced-motion:reduce){.shot-quote-track{animation:none}}
+
+/* Contour lines behind every dark page. The home page and blog place their own copy with an <img>. */
+body:not(.home) main{position:relative;overflow:hidden}
+body:not(.home) main::before{content:"";position:absolute;left:0;top:0;width:100%;height:1060px;max-height:100%;background:url(assets/topo.svg) 75% 0/cover no-repeat;opacity:.55;pointer-events:none;-webkit-mask-image:linear-gradient(to bottom,#000 30%,transparent 100%);mask-image:linear-gradient(to bottom,#000 30%,transparent 100%)}
+body:not(.home) main>*{position:relative;z-index:1}
