@@ -50,6 +50,7 @@ def main(scen_path, out_mp4):
         b = p.chromium.launch(args=["--no-sandbox"])
         pg = b.new_page(viewport={"width": 1280, "height": 720})
         pg.goto(html)
+        pg.evaluate("document.fonts.ready")
         pg.evaluate("s => init(s)", scen)
         total = pg.evaluate("TOTAL")
         n = int(total / 1000 * FPS)

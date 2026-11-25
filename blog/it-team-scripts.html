@@ -24,7 +24,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../styles.css">
 <link rel="stylesheet" href="../home.css">
-<link rel="stylesheet" href="blog.css?v=8">
+<link rel="stylesheet" href="blog.css?v=9">
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"BlogPosting","headline":"The Benefits of an IT Team Using Scripts","datePublished":"2026-11-17","author":{"@type":"Organization","name":"RMG Labs"},"publisher":{"@type":"Organization","name":"RMG Labs"},"mainEntityOfPage":"https://rmglabs.net/blog/it-team-scripts.html","image":"https://rmglabs.net/assets/brand/social/og-image.png"}
 </script>
@@ -121,17 +121,17 @@ Disconnect-VIServer -Server $Server -Confirm:$false</code></pre>
 
       <h2>Friendly Graphical Interfaces</h2>
       <p>Not everyone on a team wants to learn PowerShell and PowerCLI commands, and that is perfectly fine. Scripts can be wrapped in a simple point-and-click window, for example with Windows Forms or WPF in PowerShell, so a teammate just picks an option and clicks a button. The logic stays in the reviewed script; the window is only a friendly front door. That means people can run approved, safe tasks without typing commands, and the team keeps one trusted version of each task.</p>
-      <p>Here is a tiny Windows Forms example that runs the report above. Save it in the same folder as the report script; the vCenter login prompt appears when you click the button.</p>
+      <p>Here is a small Windows Forms example that runs the report above: a title, a short note, one button and a status line. Save it in the same folder as the report script; the vCenter login prompt appears when you click the button.</p>
       <pre><code>&lt;#
 .SYNOPSIS
 Small point-and-click front end for the snapshot report.
 .DESCRIPTION
-Shows a window with one button that runs the reviewed
-Get-OldSnapshotReport.ps1 script. Read-only.
+Shows a friendly window with one button that runs the reviewed
+Get-OldSnapshotReport.ps1 script and reports when it is done. Read-only.
 .NOTES
 Author: James Dougherty (scripty)
-Version: 1.0
-Updated: 2026-11-17
+Version: 1.1
+Updated: 2026-11-24
 Category: VMware
 Requires: Windows PowerShell, VMware PowerCLI
 Credentials: The called script prompts for your vCenter username and password
@@ -144,28 +144,77 @@ vCenter server name or address.
 param([Parameter(Mandatory)][string]$Server)
 
 Add-Type -AssemblyName System.Windows.Forms
+Add-Type -AssemblyName System.Drawing
+[System.Windows.Forms.Application]::EnableVisualStyles()
+
+$ink   = [System.Drawing.ColorTranslator]::FromHtml("#0F1A2B")
+$gray  = [System.Drawing.ColorTranslator]::FromHtml("#4A566B")
+$blue  = [System.Drawing.ColorTranslator]::FromHtml("#1F6FE0")
+$green = [System.Drawing.ColorTranslator]::FromHtml("#1A7F4B")
+$red   = [System.Drawing.ColorTranslator]::FromHtml("#B3261E")
 
 $form = New-Object System.Windows.Forms.Form
-$form.Text = "Snapshot Report"
-$form.Size = New-Object System.Drawing.Size(300, 140)
+$form.Text            = "Snapshot Report"
+$form.ClientSize      = New-Object System.Drawing.Size(440, 270)
+$form.StartPosition   = "CenterScreen"
+$form.FormBorderStyle = "FixedDialog"
+$form.MaximizeBox     = $false
+$form.BackColor       = [System.Drawing.ColorTranslator]::FromHtml("#F4F7FB")
+$form.Font            = New-Object System.Drawing.Font("Segoe UI", 10)
+
+$title = New-Object System.Windows.Forms.Label
+$title.Text      = "Snapshot Report"
+$title.Font      = New-Object System.Drawing.Font("Segoe UI", 18, [System.Drawing.FontStyle]::Bold)
+$title.ForeColor = $ink
+$title.AutoSize  = $true
+$title.Location  = New-Object System.Drawing.Point(24, 18)
+
+$hint = New-Object System.Windows.Forms.Label
+$hint.Text      = "Reads vCenter and saves a CSV report. Read-only: nothing is changed."
+$hint.ForeColor = $gray
+$hint.Size      = New-Object System.Drawing.Size(392, 44)
+$hint.Location  = New-Object System.Drawing.Point(24, 62)
 
 $button = New-Object System.Windows.Forms.Button
-$button.Text = "Run report"
-$button.Size = New-Object System.Drawing.Size(120, 32)
-$button.Location = New-Object System.Drawing.Point(80, 40)
+$button.Text      = "Run report"
+$button.Size      = New-Object System.Drawing.Size(160, 44)
+$button.Location  = New-Object System.Drawing.Point(24, 122)
+$button.FlatStyle = "Flat"
+$button.FlatAppearance.BorderSize = 0
+$button.BackColor = $blue
+$button.ForeColor = [System.Drawing.Color]::White
+$button.Font      = New-Object System.Drawing.Font("Segoe UI", 11, [System.Drawing.FontStyle]::Bold)
+$button.Cursor    = "Hand"
+
+$status = New-Object System.Windows.Forms.Label
+$status.Text      = "Ready."
+$status.ForeColor = $gray
+$status.Size      = New-Object System.Drawing.Size(392, 40)
+$status.Location  = New-Object System.Drawing.Point(24, 190)
+
 $button.Add_Click({
-    &amp; "$PSScriptRoot\Get-OldSnapshotReport.ps1" -Server $Server
-    [System.Windows.Forms.MessageBox]::Show("Report saved.")
+    $status.ForeColor = $gray
+    $status.Text = "Running... sign in to vCenter when asked."
+    $status.Refresh()
+    try {
+        &amp; "$PSScriptRoot\Get-OldSnapshotReport.ps1" -Server $Server -ErrorAction Stop
+        $status.ForeColor = $green
+        $status.Text = "Done. Report saved."
+    }
+    catch {
+        $status.ForeColor = $red
+        $status.Text = "Something went wrong: $($_.Exception.Message)"
+    }
 })
 
-$form.Controls.Add($button)
+$form.Controls.AddRange(@($title, $hint, $button, $status))
 [void]$form.ShowDialog()</code></pre>
       <figure class="demo">
         <video controls muted playsinline preload="metadata" poster="videos/snapshot-report-gui.jpg" width="1280" height="720" aria-label="Screen recording of the point-and-click snapshot report window">
           <source src="videos/snapshot-report-gui.mp4" type="video/mp4">
           Your browser does not support embedded video.
         </video>
-        <figcaption>Sample run: one button for the teammate, the reviewed script behind it. Simulated lab data and a placeholder server name.</figcaption>
+        <figcaption>Sample run of the form above: one button for the teammate, the reviewed script behind it. The vCenter login prompt is shown as an illustration; simulated lab data and a placeholder server name.</figcaption>
       </figure>
 
       <h2>Getting Started</h2>

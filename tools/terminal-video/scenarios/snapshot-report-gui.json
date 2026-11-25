@@ -23,9 +23,15 @@
   {
    "type": "form",
    "title": "Snapshot Report",
+   "hint": "Reads vCenter and saves a CSV report. Read-only: nothing is changed.",
    "button": "Run report",
-   "dur": 3400,
+   "dur": 3600,
    "cap": "2. A teammate just clicks one button"
+  },
+  {
+   "type": "status",
+   "text": "Running... sign in to vCenter when asked.",
+   "color": "#4a566b"
   },
   {
    "type": "dialog",
@@ -36,13 +42,14 @@
   },
   {
    "type": "wait",
-   "dur": 2600,
+   "dur": 2400,
    "cap": "4. The reviewed script runs behind the scenes"
   },
   {
-   "type": "msgbox",
-   "text": "Report saved.",
-   "dur": 3200,
+   "type": "status",
+   "text": "Done. Report saved.",
+   "color": "#1a7f4b",
+   "dur": 3400,
    "cap": "5. Done - the CSV report is saved"
   },
   {

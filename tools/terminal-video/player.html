@@ -1,41 +1,50 @@
 <!doctype html>
 <html><head><meta charset="utf-8">
 <style>
+@font-face{font-family:"Fraunces";font-weight:600;src:url("fonts/fraunces-latin-600-normal.woff2") format("woff2")}
 html,body{margin:0;width:1280px;height:720px;overflow:hidden;background:#0f1a2b;font-family:Inter,"Segoe UI",system-ui,sans-serif}
 .bg{position:absolute;inset:0;background:radial-gradient(900px 520px at 88% 0%,rgba(63,157,253,.38),transparent 70%),linear-gradient(135deg,#0f1a2b 0%,#16345c 100%)}
-.badge{position:absolute;top:13px;right:64px;height:30px;line-height:30px;padding:0 14px;border-radius:999px;background:rgba(124,192,255,.16);border:1px solid rgba(124,192,255,.45);color:#cfe6ff;font-size:13px;font-weight:600;letter-spacing:.04em}
-.brand{position:absolute;top:13px;left:64px;height:30px;line-height:30px;color:#fff;font-weight:700;font-size:15px;letter-spacing:.02em}
-.brand b{color:#7cc0ff;font-weight:600;letter-spacing:.18em;font-size:12px;margin-left:6px}
-.win{position:absolute;left:64px;top:56px;width:1152px;height:612px;background:#0c0c0c;border-radius:12px;box-shadow:0 30px 80px rgba(0,0,0,.55);overflow:hidden}
+.badge{position:absolute;top:19px;right:64px;height:30px;line-height:30px;padding:0 14px;border-radius:999px;background:rgba(124,192,255,.16);border:1px solid rgba(124,192,255,.45);color:#cfe6ff;font-size:13px;font-weight:600;letter-spacing:.04em}
+.logo{position:absolute;top:8px;left:62px;display:flex;align-items:center;gap:11px;height:52px}
+.logo svg{width:46px;height:44px;filter:drop-shadow(0 0 10px rgba(63,157,253,.45))}
+.logo .word{font-family:"Fraunces",Georgia,serif;font-weight:600;font-size:31px;letter-spacing:.01em;line-height:1;color:#fff;white-space:nowrap}
+.logo .labs{font-family:Inter,system-ui,sans-serif;font-weight:500;font-size:14px;letter-spacing:.38em;color:#9fb2d0;margin-left:4px}
+.win{position:absolute;left:64px;top:68px;width:1152px;height:600px;background:#0c0c0c;border-radius:12px;box-shadow:0 30px 80px rgba(0,0,0,.55);overflow:hidden}
 .tb{height:38px;background:#202020;display:flex;align-items:center;justify-content:space-between;padding:0 16px;color:#e6e6e6;font-size:14px}
 .tb .ctl{letter-spacing:18px;color:#bbb}
-.term{position:absolute;left:0;right:0;top:38px;bottom:0;padding:14px 18px;font:16px/1.4 "DejaVu Sans Mono",Consolas,monospace;color:#cccccc;white-space:pre;overflow:hidden}
+.term{position:absolute;left:0;right:0;top:38px;bottom:0;padding:12px 18px;font:16px/1.36 "DejaVu Sans Mono",Consolas,monospace;color:#cccccc;white-space:pre;overflow:hidden}
 .cmd{color:#f9f1a5}.par{color:#9aa0a6}.val{color:#cccccc}
 .cur{background:#ccc;color:#ccc}
 .cap{position:absolute;left:64px;bottom:14px;height:34px;line-height:34px;color:#fff;font-size:16px;font-weight:600}
 .cap i{display:inline-block;width:8px;height:8px;border-radius:50%;background:#3f9dfd;margin-right:10px;vertical-align:middle}
-.dlg{position:absolute;left:420px;top:190px;width:440px;background:#f0f0f0;border:1px solid #6b7a90;box-shadow:0 18px 50px rgba(0,0,0,.55);color:#111;font:14px "Segoe UI",Inter,system-ui,sans-serif}
-.dh{background:#fff;padding:9px 12px;border-bottom:1px solid #cfd6df;display:flex;justify-content:space-between;font-size:13px}
-.db{padding:16px 18px 16px}
-.db .dt{margin-bottom:12px}
-.db label{display:block;margin:8px 0 3px;font-size:13px}
-.inp{height:26px;line-height:26px;background:#fff;border:1px solid #7a8798;padding:0 8px;font-size:14px;white-space:nowrap;overflow:hidden}
-.btns{margin-top:16px;text-align:right}
-.btns span{display:inline-block;min-width:78px;text-align:center;padding:5px 0;margin-left:8px;background:#e1e1e1;border:1px solid #adadad;font-size:13px}
-.btns span.on{background:#cce4f7;border-color:#2b78c8}
-.frm{position:absolute;left:380px;top:170px;width:450px;height:246px;background:#f0f0f0;border:1px solid #6b7a90;box-shadow:0 18px 50px rgba(0,0,0,.55);font:15px "Segoe UI",Inter,system-ui,sans-serif;color:#111}
-.frm .dh{padding:10px 12px;font-size:14px}
-.fbtn{position:absolute;left:120px;top:96px;width:180px;height:48px;line-height:48px;text-align:center;background:#e1e1e1;border:1px solid #adadad;font-size:17px}
-.fbtn.on{background:#cce4f7;border-color:#2b78c8}
-.msg{position:absolute;left:470px;top:230px;width:360px;background:#f0f0f0;border:1px solid #6b7a90;box-shadow:0 18px 50px rgba(0,0,0,.6);font:15px "Segoe UI",Inter,system-ui,sans-serif;color:#111}
-.msg .dh{height:14px;padding:6px 12px}
-.msg .mb{padding:24px 24px 18px}
-.msg .btns{background:#e8e8e8;margin:0;padding:12px 16px;text-align:center}
-.msg .btns span{margin:0}
+/* credential dialog: modern Windows look */
+.dlg{position:absolute;left:405px;top:190px;width:470px;background:#fff;border:1px solid #d3d9e2;border-radius:12px;box-shadow:0 26px 64px rgba(0,0,0,.55);overflow:hidden;color:#16202f;font-family:"Segoe UI",Inter,system-ui,sans-serif}
+.dh{display:flex;align-items:center;gap:12px;padding:16px 20px 6px}
+.dh .ico{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#3f9dfd,#1f56d6);display:flex;align-items:center;justify-content:center}
+.dh .ico svg{width:20px;height:20px}
+.dh .t{font-size:15px;font-weight:600}
+.dh .x{margin-left:auto;color:#6b7686;font-size:14px}
+.db{padding:6px 20px 18px}
+.db .dt{margin:6px 0 10px 46px;color:#566175;font-size:13.5px}
+.db label{display:block;margin:10px 0 4px;font-size:12.5px;font-weight:600;color:#3c485c}
+.inp{height:36px;line-height:36px;background:#f7f9fc;border:1px solid #c6cedb;border-radius:7px;padding:0 12px;font-size:14.5px;white-space:nowrap;overflow:hidden}
+.inp.focus{border-color:#1f6fe0;box-shadow:0 0 0 3px rgba(31,111,224,.18);background:#fff}
+.btns{margin-top:18px;text-align:right}
+.btns span{display:inline-block;min-width:96px;text-align:center;padding:9px 0;margin-left:10px;background:#eef1f6;border:1px solid #cdd4df;border-radius:7px;font-size:13.5px;font-weight:600;color:#26324a}
+.btns span.ok{background:#1f6fe0;border-color:#1f6fe0;color:#fff}
+.btns span.on{background:#1759b8;border-color:#1759b8;color:#fff}
+/* sample WinForms window (matches Show-SnapshotReportForm.ps1) */
+.frm{position:absolute;left:385px;top:150px;width:470px;height:306px;background:#f4f7fb;border:1px solid #9aa7ba;box-shadow:0 22px 56px rgba(0,0,0,.55);overflow:hidden;color:#0f1a2b;font-family:"Segoe UI",Inter,system-ui,sans-serif}
+.frm .fh{height:36px;background:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 14px;font-size:13.5px;color:#222;border-bottom:1px solid #dfe5ee}
+.frm .ft{position:absolute;left:28px;top:54px;font-size:27px;font-weight:700;color:#0f1a2b}
+.frm .fp{position:absolute;left:28px;top:100px;width:410px;font-size:15px;line-height:1.35;color:#4a566b}
+.fbtn{position:absolute;left:28px;top:168px;width:176px;height:48px;line-height:48px;text-align:center;background:#1f6fe0;color:#fff;font-size:17px;font-weight:700}
+.fbtn.on{background:#1759b8}
+.frm .fs{position:absolute;left:28px;top:240px;font-size:15px}
 .mouse{position:absolute;width:22px;height:30px}
 </style></head><body>
 <div class="bg"></div>
-<div class="brand">RMG<b>LABS</b></div>
+<div class="logo"><svg viewBox="0 0 40 38" aria-hidden="true"><polygon points="2,36 18,3 28,22 20,36" fill="#3f9dfd"/><polygon points="18,3 38,36 24,36 20,22" fill="#1f56d6"/></svg><span class="word">RMG<span class="labs">LABS</span></span></div>
 <div class="badge" id="badge"></div>
 <div class="win"><div class="tb"><span id="ttl"></span><span class="ctl">&#8211;&#9633;&#10005;</span></div><div class="term" id="term"></div></div>
 <div class="cap" id="cap"></div>
@@ -48,11 +57,11 @@ function init(s){S=s;let T=0;S.steps.forEach(st=>{st.start=T;st.dur=st.dur||0;T+
  document.getElementById('badge').textContent=S.badge;document.getElementById('ttl').textContent=S.title}
 const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
 const lerp=(a,b,t)=>a+(b-a)*t;
-function dialog(p,u,pw){const ut=u.slice(0,Math.floor(clamp((p-.12)/.38,0,1)*u.length));const pn=Math.floor(clamp((p-.5)/.22,0,1)*pw);
- return '<div class="dlg"><div class="dh"><span>Windows PowerShell credential request</span><span>&#10005;</span></div><div class="db"><div class="dt">Enter your credentials.</div><label>User name:</label><div class="inp">'+esc(ut)+'</div><label>Password:</label><div class="inp">'+'&#9679;'.repeat(pn)+'</div><div class="btns"><span class="'+(p>.86?'on':'')+'">OK</span><span>Cancel</span></div></div></div>'}
+function dialog(p,u,pw){const ut=u.slice(0,Math.floor(clamp((p-.12)/.38,0,1)*u.length));const pn=Math.floor(clamp((p-.5)/.22,0,1)*pw);const onPw=p>=.5;
+ return '<div class="dlg"><div class="dh"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4.5 4-6.5 8-6.5s7 2 8 6.5"/></svg></div><span class="t">Windows PowerShell credential request</span><span class="x">&#10005;</span></div><div class="db"><div class="dt">Enter your credentials.</div><label>User name</label><div class="inp '+(!onPw?'focus':'')+'">'+esc(ut)+'</div><label>Password</label><div class="inp '+(onPw?'focus':'')+'">'+'&#9679;'.repeat(pn)+'</div><div class="btns"><span class="ok '+(p>.86?'on':'')+'">OK</span><span>Cancel</span></div></div></div>'}
 function mouse(x,y){return '<svg class="mouse" style="left:'+x+'px;top:'+y+'px" viewBox="0 0 22 30"><path d="M2 1v22l6-5 4 9 4-2-4-9h8z" fill="#fff" stroke="#000" stroke-width="1.6" stroke-linejoin="round"/></svg>'}
 function seek(t){
- const lines=[];let cap='',over='',formOpen=false,formStart=null,showCursor=true;
+ const lines=[];let cap='',over='',formOpen=false,formStart=null,showCursor=true,stT='Ready.',stC='#4a566b';
  for(const s of S.steps){
   if(t<s.start)break;
   const p=s.dur?clamp((t-s.start)/s.dur,0,1):1;const active=t<s.start+s.dur;
@@ -63,13 +72,14 @@ function seek(t){
   else if(s.type==='dialog'&&active){over+=dialog(p,s.user,s.pw);showCursor=false}
   else if(s.type==='form'){formOpen=true;formStart=s;}
   else if(s.type==='msgbox'){formOpen=true;formStart=null;if(active){over+='<div class="msg"><div class="dh"></div><div class="mb">'+esc(s.text)+'</div><div class="btns"><span class="'+(p>.8?'on':'')+'">OK</span></div></div>'}else formOpen=false}
+  else if(s.type==='status'){stT=s.text;stC=s.color||'#4a566b'}
   else if(s.type==='formclose')formOpen=false;
  }
  // form window (under dialogs/messageboxes)
  let formHtml='';
  if(formOpen){const fs=S.steps.find(x=>x.type==='form');const p=clamp((t-fs.start)/fs.dur,0,1);const pressed=p>.72&&p<.9;
-  formHtml='<div class="frm"><div class="dh"><span>'+esc(fs.title)+'</span><span>&#10005;</span></div><div class="fbtn '+(pressed?'on':'')+'">'+esc(fs.button)+'</div></div>';
-  if(t<fs.start+fs.dur){const mp=clamp((p-.1)/.55,0,1);const e=mp*mp*(3-2*mp);formHtml+=mouse(lerp(900,600,e),lerp(520,300,e))}
+  formHtml='<div class="frm"><div class="fh"><span>'+esc(fs.title)+'</span><span>&#10005;</span></div><div class="ft">'+esc(fs.title)+'</div><div class="fp">'+esc(fs.hint)+'</div><div class="fbtn '+(pressed?'on':'')+'">'+esc(fs.button)+'</div><div class="fs" style="color:'+stC+'">'+esc(stT)+'</div></div>';
+  if(t<fs.start+fs.dur){const mp=clamp((p-.1)/.55,0,1);const e=mp*mp*(3-2*mp);formHtml+=mouse(lerp(900,500,e),lerp(560,342,e))}
   showCursor=false}
  const blink=Math.floor(t/530)%2===0;
  const term=document.getElementById('term');

@@ -13,3 +13,7 @@ real hostnames, usernames or data. Timings and counts in a scenario are illustra
 Scenario steps: `prompt`, `type`, `wait`, `dialog` (credential prompt), `table` (formatted like
 Format-Table -AutoSize), `out` (plain lines), and for a GUI clip `form`, `msgbox`, `formclose`.
 Add `cap` to a step to show a caption under the window. See the existing files in `scenarios/`.
+
+The RMG Labs logo (peak mark plus wordmark, same as the site header) is drawn in `player.html`.
+When the logo changes, update the `.logo` markup and CSS there, then re-render the clips.
+The wordmark font (Fraunces, SIL Open Font License) is in `fonts/`.
