@@ -24,7 +24,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../styles.css">
 <link rel="stylesheet" href="../home.css">
-<link rel="stylesheet" href="blog.css?v=9">
+<link rel="stylesheet" href="blog.css?v=10">
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"BlogPosting","headline":"The Benefits of an IT Team Using Scripts","datePublished":"2026-11-17","author":{"@type":"Organization","name":"RMG Labs"},"publisher":{"@type":"Organization","name":"RMG Labs"},"mainEntityOfPage":"https://rmglabs.net/blog/it-team-scripts.html","image":"https://rmglabs.net/assets/brand/social/og-image.png"}
 </script>
@@ -117,6 +117,7 @@ Disconnect-VIServer -Server $Server -Confirm:$false</code></pre>
         </video>
         <figcaption>Sample run with simulated lab data (the server name is a placeholder). Your own output will differ.</figcaption>
       </figure>
+      <p class="form-note">Prefer clicking to typing? With a little work, or a little help from me, any script like this can have a nice-looking form as well. <a href="../index.html#contact">Get in touch</a>.</p>
       <p>Schedule it to run each morning and you have a daily snapshot check with no clicking at all. If you later add a cleanup step that removes snapshots, build it with <code>-WhatIf</code> support so you can preview the changes before anything is deleted.</p>
 
       <h2>Friendly Graphical Interfaces</h2>
@@ -216,6 +217,7 @@ $form.Controls.AddRange(@($title, $hint, $button, $status))
         </video>
         <figcaption>Sample run of the form above: one button for the teammate, the reviewed script behind it. The vCenter login prompt is shown as an illustration; simulated lab data and a placeholder server name.</figcaption>
       </figure>
+      <p class="form-note">With a little work, or a little help from me, you can have nice-looking forms like this for your own scripts as well. <a href="../index.html#contact">Get in touch</a>.</p>
 
       <h2>Getting Started</h2>
       <p>Pick one task your team does every week and script just that. Keep it read-only first, review it together, and store it somewhere shared. Small, safe wins build trust quickly, and the collection of scripts grows from there.</p>

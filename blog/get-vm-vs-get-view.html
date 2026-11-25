@@ -24,7 +24,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../styles.css">
 <link rel="stylesheet" href="../home.css">
-<link rel="stylesheet" href="blog.css?v=9">
+<link rel="stylesheet" href="blog.css?v=10">
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"BlogPosting","headline":"Get-VM or Get-View? Choosing the Right PowerCLI Cmdlet","datePublished":"2026-11-21","author":{"@type":"Organization","name":"RMG Labs"},"publisher":{"@type":"Organization","name":"RMG Labs"},"mainEntityOfPage":"https://rmglabs.net/blog/get-vm-vs-get-view.html","image":"https://rmglabs.net/assets/brand/social/og-image.png"}
 </script>
@@ -143,6 +143,7 @@ Disconnect-VIServer -Server $Server -Confirm:$false</code></pre>
         </video>
         <figcaption>Sample run with simulated lab data. The timings shown are illustrative only: measure your own environment.</figcaption>
       </figure>
+      <p class="form-note">Prefer clicking to typing? With a little work, or a little help from me, any script like this can have a nice-looking form as well. <a href="../index.html#contact">Get in touch</a>.</p>
 
       <h2>Reading the Results</h2>
       <p>Both methods should report the same VM count and similar values; only the speed and the raw formatting differ. Notice the small clean-up the <code>Get-View</code> branch needs: the power state is a plain string such as <code>poweredOn</code>, memory is converted from megabytes, and templates are excluded with a filter because <code>Get-View</code> returns them while <code>Get-VM</code> does not. On a small lab the timings may be close. Run it against production, or the largest vCenter you can safely read from, to see where the gap opens up.</p>

@@ -131,6 +131,7 @@ Disconnect-VIServer -Server $Server -Confirm:$false</code></pre>
         </video>
         <figcaption>Sample run with simulated lab data (the server name is a placeholder). Your own output will differ.</figcaption>
       </figure>
+      <p class="form-note">Prefer clicking to typing? With a little work, or a little help from me, any script like this can have a nice-looking form as well. <a href="../index.html#contact">Get in touch</a>.</p>
 
       <h2>Turning the List Into Action</h2>
       <p>Resist the urge to delete straight from the report. Each snapshot has an owner and a reason: a change window that has not closed, a developer's rollback point, or a vendor upgrade still being validated. Email the owners, confirm the snapshot is no longer needed and then remove it. PowerCLI's <code>Remove-Snapshot</code> cmdlet supports <code>-WhatIf</code>, so you can preview exactly which snapshots a command would remove before running it for real. Removing a snapshot merges its changes into the base disk, which can take time and generate disk activity, so schedule it outside busy hours.</p>
