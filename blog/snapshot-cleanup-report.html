@@ -24,7 +24,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../styles.css">
 <link rel="stylesheet" href="../home.css">
-<link rel="stylesheet" href="blog.css?v=7">
+<link rel="stylesheet" href="blog.css?v=11">
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"BlogPosting","headline":"Find Forgotten VM Snapshots with a Read-Only PowerCLI Report","datePublished":"2026-11-23","author":{"@type":"Organization","name":"RMG Labs"},"publisher":{"@type":"Organization","name":"RMG Labs"},"mainEntityOfPage":"https://rmglabs.net/blog/snapshot-cleanup-report.html","image":"https://rmglabs.net/assets/brand/social/og-image.png"}
 </script>
@@ -122,6 +122,16 @@ if ($report) {
 }
 
 Disconnect-VIServer -Server $Server -Confirm:$false</code></pre>
+
+      <h2>See It Run</h2>
+      <figure class="demo">
+        <video controls muted playsinline preload="metadata" poster="videos/snapshot-cleanup-run.jpg" width="1280" height="720" aria-label="Screen recording of the old snapshot report running in PowerShell">
+          <source src="videos/snapshot-cleanup-run.mp4" type="video/mp4">
+          Your browser does not support embedded video.
+        </video>
+        <figcaption>Sample run with simulated lab data (the server name is a placeholder). Your own output will differ.</figcaption>
+      </figure>
+      <p class="form-note">Prefer clicking to typing? With a little work, or a little help from me, any script like this can have a nice-looking form as well. <a href="../index.html#contact">Get in touch</a>.</p>
 
       <h2>Turning the List Into Action</h2>
       <p>Resist the urge to delete straight from the report. Each snapshot has an owner and a reason: a change window that has not closed, a developer's rollback point, or a vendor upgrade still being validated. Email the owners, confirm the snapshot is no longer needed and then remove it. PowerCLI's <code>Remove-Snapshot</code> cmdlet supports <code>-WhatIf</code>, so you can preview exactly which snapshots a command would remove before running it for real. Removing a snapshot merges its changes into the base disk, which can take time and generate disk activity, so schedule it outside busy hours.</p>

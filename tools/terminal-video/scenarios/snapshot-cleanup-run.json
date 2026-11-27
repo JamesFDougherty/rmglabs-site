@@ -1,0 +1,122 @@
+{
+ "title": "Windows PowerShell",
+ "badge": "SAMPLE OUTPUT  |  simulated lab data",
+ "prompt": "PS C:\\Scripts> ",
+ "steps": [
+  {
+   "type": "prompt",
+   "cap": "1. Run the report"
+  },
+  {
+   "type": "wait",
+   "dur": 700
+  },
+  {
+   "type": "type",
+   "text": ".\\Get-OldSnapshotReport.ps1 -Server vcenter.example.local -CsvPath .\\old-snapshots.csv",
+   "dur": 3600
+  },
+  {
+   "type": "wait",
+   "dur": 600
+  },
+  {
+   "type": "dialog",
+   "user": "svc-readonly@example.local",
+   "pw": 12,
+   "dur": 5200,
+   "cap": "2. PowerCLI asks for your vCenter login"
+  },
+  {
+   "type": "wait",
+   "dur": 2800,
+   "cap": "3. It reads every snapshot - read-only, nothing is removed"
+  },
+  {
+   "type": "table",
+   "dur": 700,
+   "cap": "4. Oldest first, with age, size and the reason it was taken",
+   "cols": [
+    {
+     "h": "VM"
+    },
+    {
+     "h": "Snapshot"
+    },
+    {
+     "h": "AgeDays",
+     "align": "r"
+    },
+    {
+     "h": "Created"
+    },
+    {
+     "h": "SizeGB",
+     "align": "r"
+    },
+    {
+     "h": "Description"
+    }
+   ],
+   "rows": [
+    [
+     "FS-02",
+     "Pre-upgrade",
+     "46",
+     "10/9/2026 10:15:32 AM",
+     "118.2",
+     "Before OS upgrade"
+    ],
+    [
+     "APP-SQL01",
+     "Before patching",
+     "27",
+     "10/28/2026 9:41:55 AM",
+     "42.73",
+     "Pre-patch Tuesday"
+    ],
+    [
+     "WEB-03",
+     "Test config change",
+     "18",
+     "11/6/2026 4:12:08 PM",
+     "6.05",
+     "Config test, delete after"
+    ]
+   ]
+  },
+  {
+   "type": "wait",
+   "dur": 3600
+  },
+  {
+   "type": "prompt",
+   "cap": "5. The same list is saved as a CSV"
+  },
+  {
+   "type": "wait",
+   "dur": 600
+  },
+  {
+   "type": "type",
+   "text": "Get-Content .\\old-snapshots.csv -TotalCount 2",
+   "dur": 1700
+  },
+  {
+   "type": "wait",
+   "dur": 300
+  },
+  {
+   "type": "out",
+   "dur": 400,
+   "lines": [
+    "\"VM\",\"Snapshot\",\"AgeDays\",\"Created\",\"SizeGB\",\"Description\"",
+    "\"FS-02\",\"Pre-upgrade\",\"46\",\"10/9/2026 10:15:32 AM\",\"118.2\",\"Before OS upgrade\""
+   ]
+  },
+  {
+   "type": "wait",
+   "dur": 4500
+  }
+ ]
+}

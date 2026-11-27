@@ -24,7 +24,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../styles.css">
 <link rel="stylesheet" href="../home.css">
-<link rel="stylesheet" href="blog.css?v=7">
+<link rel="stylesheet" href="blog.css?v=11">
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"BlogPosting","headline":"Build a Datastore Capacity Report with PowerCLI","datePublished":"2026-11-19","author":{"@type":"Organization","name":"RMG Labs"},"publisher":{"@type":"Organization","name":"RMG Labs"},"mainEntityOfPage":"https://rmglabs.net/blog/datastore-capacity-report.html","image":"https://rmglabs.net/assets/brand/social/og-image.png"}
 </script>
@@ -112,6 +112,16 @@ $report | Export-Csv -Path $OutFile -NoTypeInformation
 $report | Format-Table -AutoSize
 
 Disconnect-VIServer -Server $Server -Confirm:$false</code></pre>
+
+      <h2>See It Run</h2>
+      <figure class="demo">
+        <video controls muted playsinline preload="metadata" poster="videos/datastore-capacity-run.jpg" width="1280" height="720" aria-label="Screen recording of the datastore capacity report running in PowerShell">
+          <source src="videos/datastore-capacity-run.mp4" type="video/mp4">
+          Your browser does not support embedded video.
+        </video>
+        <figcaption>Sample run with simulated lab data (the server name is a placeholder). Your own output will differ.</figcaption>
+      </figure>
+      <p class="form-note">Prefer clicking to typing? With a little work, or a little help from me, any script like this can have a nice-looking form as well. <a href="../index.html#contact">Get in touch</a>.</p>
 
       <h2>How It Works</h2>
       <p><code>Get-Datastore</code> returns each datastore with its capacity and free space in gigabytes. The script turns those two numbers into a percentage, labels each datastore <code>LOW</code> or <code>OK</code>, and sorts so the tightest datastores appear first. The same results go to the screen and to a CSV file, which opens cleanly in Excel for sharing with the team.</p>

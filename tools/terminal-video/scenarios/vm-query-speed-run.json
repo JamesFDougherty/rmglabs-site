@@ -1,0 +1,169 @@
+{
+ "title": "Windows PowerShell",
+ "badge": "SAMPLE OUTPUT  |  simulated lab data",
+ "prompt": "PS C:\\Scripts> ",
+ "steps": [
+  {
+   "type": "prompt",
+   "cap": "1. Time Get-VM against Get-View"
+  },
+  {
+   "type": "wait",
+   "dur": 700
+  },
+  {
+   "type": "type",
+   "text": ".\\Compare-VmQuerySpeed.ps1 -Server vcenter.example.local -Top 3",
+   "dur": 2400
+  },
+  {
+   "type": "wait",
+   "dur": 600
+  },
+  {
+   "type": "dialog",
+   "user": "svc-readonly@example.local",
+   "pw": 12,
+   "dur": 5200,
+   "cap": "2. PowerCLI asks for your vCenter login"
+  },
+  {
+   "type": "wait",
+   "dur": 3200,
+   "cap": "3. It lists every VM both ways and times each (read-only)"
+  },
+  {
+   "type": "table",
+   "dur": 600,
+   "cap": "4. Same VM count, different time (timings here are illustrative)",
+   "cols": [
+    {
+     "h": "Method"
+    },
+    {
+     "h": "Seconds",
+     "align": "r"
+    },
+    {
+     "h": "VMs",
+     "align": "r"
+    }
+   ],
+   "rows": [
+    [
+     "Get-VM",
+     "18.6",
+     "1240"
+    ],
+    [
+     "Get-View",
+     "2.4",
+     "1240"
+    ]
+   ]
+  },
+  {
+   "type": "wait",
+   "dur": 1500
+  },
+  {
+   "type": "out",
+   "dur": 0,
+   "lines": [
+    "--- Get-VM sample ---"
+   ]
+  },
+  {
+   "type": "table",
+   "dur": 500,
+   "cap": "5. Sample rows from each method - note the raw Get-View formatting",
+   "cols": [
+    {
+     "h": "Name"
+    },
+    {
+     "h": "PowerState"
+    },
+    {
+     "h": "NumCpu",
+     "align": "r"
+    },
+    {
+     "h": "MemoryGB",
+     "align": "r"
+    }
+   ],
+   "rows": [
+    [
+     "APP-SQL01",
+     "PoweredOn",
+     "8",
+     "32"
+    ],
+    [
+     "APP-WEB01",
+     "PoweredOn",
+     "2",
+     "8"
+    ],
+    [
+     "FS-01",
+     "PoweredOff",
+     "4",
+     "16"
+    ]
+   ]
+  },
+  {
+   "type": "out",
+   "dur": 0,
+   "lines": [
+    "--- Get-View sample ---"
+   ]
+  },
+  {
+   "type": "table",
+   "dur": 500,
+   "cols": [
+    {
+     "h": "Name"
+    },
+    {
+     "h": "PowerState"
+    },
+    {
+     "h": "NumCpu",
+     "align": "r"
+    },
+    {
+     "h": "MemoryGB",
+     "align": "r"
+    }
+   ],
+   "rows": [
+    [
+     "APP-WEB01",
+     "poweredOn",
+     "2",
+     "8"
+    ],
+    [
+     "FS-01",
+     "poweredOff",
+     "4",
+     "16"
+    ],
+    [
+     "APP-SQL01",
+     "poweredOn",
+     "8",
+     "32"
+    ]
+   ]
+  },
+  {
+   "type": "wait",
+   "dur": 5000
+  }
+ ]
+}
