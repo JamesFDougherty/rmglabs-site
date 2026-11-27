@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ESXi Host Health at a Glance with a Read-Only PowerCLI Report | RMGLabs</title>
+<meta name="description" content="A short read-only PowerCLI script lists every ESXi host with its connection state, CPU and memory use, version and uptime, so problems show up before users notice.">
+<link rel="canonical" href="https://rmglabs.net/blog/host-health-report.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ESXi Host Health at a Glance with a Read-Only PowerCLI Report">
+<meta property="og:description" content="Check every ESXi host in one table with a safe, read-only PowerCLI report.">
+<meta property="og:url" content="https://rmglabs.net/blog/host-health-report.html">
+<meta property="og:image" content="https://rmglabs.net/assets/brand/social/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../assets/brand/icons/favicon.ico" sizes="48x48">
+<link rel="icon" href="../assets/brand/icons/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../assets/brand/icons/apple-touch-icon.png">
+<link rel="manifest" href="../assets/brand/site.webmanifest">
+<meta name="theme-color" content="#f4f7fb">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../styles.css">
+<link rel="stylesheet" href="../home.css">
+<link rel="stylesheet" href="blog.css?v=7">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","headline":"ESXi Host Health at a Glance with a Read-Only PowerCLI Report","datePublished":"2026-11-25","author":{"@type":"Organization","name":"RMG Labs"},"publisher":{"@type":"Organization","name":"RMG Labs"},"mainEntityOfPage":"https://rmglabs.net/blog/host-health-report.html","image":"https://rmglabs.net/assets/brand/social/og-image.png"}
+</script>
+</head>
+<body class="home">
+<header class="nav"><div class="wrap">
+  <a class="logo" href="../index.html" aria-label="RMG Labs home">
+    <svg class="peak" viewBox="0 0 40 38" aria-hidden="true"><polygon points="2,36 18,3 28,22 20,36" fill="#3f9dfd"/><polygon points="18,3 38,36 24,36 20,22" fill="#1f56d6"/></svg>
+    <span class="word"><span class="rmg">RMG</span> <span class="labs">LABS</span></span>
+  </a>
+  <button class="menu-btn" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="site-nav">
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+  </button>
+  <nav id="site-nav"><a href="../index.html#build">What I build</a><a href="../projects/">Projects</a><a href="../index.html#about">About</a><a href="../blog/">Blog</a><a href="../index.html#contact" class="pill">Contact</a></nav>
+</div></header>
+
+<main>
+<img class="hero-bg" src="../assets/topo.svg" alt="" aria-hidden="true" width="1440" height="1060">
+<section class="blog-hero">
+  <div class="wrap">
+    <a class="back" href="./">&larr; All articles</a>
+    <div class="eyebrow">VMware scripting &middot; Host health</div>
+    <h1>ESXi Host Health at a Glance with a Read-Only PowerCLI Report</h1>
+    <div class="post-meta"><span>By RMG Labs</span><span>November 25, 2026</span><span>4 min read</span></div>
+  </div>
+</section>
+
+<section class="post-body">
+  <div class="wrap">
+    <article class="post">
+      <p>Most vSphere trouble gives a hint before it becomes an outage: a host that dropped out of vCenter, one running hot on memory, or one nobody has rebooted or patched in a year. Clicking through each host in the client works for three hosts and gets old fast at thirty. A small read-only PowerCLI script can put every host in one table, so a daily glance replaces a daily tour.</p>
+
+      <h2>What to Look At</h2>
+      <p>The objects returned by <code>Get-VMHost</code> already carry the essentials: <code>ConnectionState</code> (Connected, Disconnected, NotResponding or Maintenance), <code>PowerState</code>, <code>NumCpu</code>, <code>CpuUsageMhz</code> and <code>CpuTotalMhz</code>, <code>MemoryUsageGB</code> and <code>MemoryTotalGB</code>, plus <code>Version</code> and <code>Build</code>. Uptime is not a top-level property, but it is available from the host's underlying vSphere data at <code>ExtensionData.Summary.QuickStats.Uptime</code>, reported in seconds. Together these answer the daily questions: is everything connected, is anything close to its limits, and are the hosts running the same build?</p>
+
+      <h2>The Script</h2>
+      <p>You need the VMware PowerCLI module and a vCenter account with read access. PowerCLI prompts for your username and password when it connects, and nothing is stored. The script only reads; it never puts a host in maintenance mode or changes a setting.</p>
+      <pre><code>&lt;#
+.SYNOPSIS
+Reports connection state, CPU and memory use, version and uptime for ESXi hosts.
+.DESCRIPTION
+Reads every host from vCenter and lists its health at a glance, with
+a Flag column for hosts that are not connected or are running high on
+CPU or memory. Optionally exports the result to CSV. Read-only: no host
+is changed.
+.NOTES
+Author: James Dougherty (scripty)
+Version: 1.0
+Updated: 2026-11-25
+Category: VMware
+Requires: VMware PowerCLI
+Credentials: Prompts for your vCenter username and password when it runs
+Output: Table on screen, optional CSV file
+.PARAMETER Server
+vCenter server name or address.
+.PARAMETER WarnPercent
+CPU or memory use at or above this percent is flagged. Default is 80.
+.PARAMETER CsvPath
+Optional path for a CSV copy of the report.
+.EXAMPLE
+.\Get-HostHealthReport.ps1 -Server vcenter.example.local -WarnPercent 85
+#&gt;
+param(
+    [Parameter(Mandatory)][string]$Server,
+    [int]$WarnPercent = 80,
+    [string]$CsvPath
+)
+
+# No credentials are stored in this script: PowerCLI asks for them.
+Connect-VIServer -Server $Server | Out-Null
+
+$report = Get-VMHost | Sort-Object Name | ForEach-Object {
+    $cpuPct = if ($_.CpuTotalMhz) { [math]::Round(100 * $_.CpuUsageMhz / $_.CpuTotalMhz, 1) } else { $null }
+    $memPct = if ($_.MemoryTotalGB) { [math]::Round(100 * $_.MemoryUsageGB / $_.MemoryTotalGB, 1) } else { $null }
+    $uptime = $_.ExtensionData.Summary.QuickStats.Uptime
+    $flag = if ($_.ConnectionState -ne 'Connected') { 'CHECK STATE' }
+            elseif ($cpuPct -ge $WarnPercent -or $memPct -ge $WarnPercent) { 'HIGH USE' }
+            else { '' }
+    [pscustomobject]@{
+        Host       = $_.Name
+        State      = $_.ConnectionState
+        CpuPercent = $cpuPct
+        MemPercent = $memPct
+        Version    = "$($_.Version) build $($_.Build)"
+        UptimeDays = if ($uptime) { [math]::Round($uptime / 86400, 1) } else { $null }
+        Flag       = $flag
+    }
+}
+
+$report | Format-Table -AutoSize
+if ($CsvPath) { $report | Export-Csv -Path $CsvPath -NoTypeInformation }
+
+Disconnect-VIServer -Server $Server -Confirm:$false</code></pre>
+
+      <h2>Reading the Results</h2>
+      <p>Start with the Flag column. A host showing a state other than Connected deserves attention first, though a host in Maintenance is often intentional, so check your change calendar before worrying. High CPU or memory is a prompt to look closer, not a verdict: a busy host at 85 percent may be fine if the cluster has headroom, and a quiet host at 40 percent may still be a poor place to put one more large VM. The Version column makes uneven patching obvious, since hosts in the same cluster usually should share a build. A very large UptimeDays value can be a reminder that a host has missed its patch window.</p>
+
+      <h2>Where to Take It Next</h2>
+      <p>Run it each morning and keep the CSV so you can see trends. Pair it with the <a href="datastore-capacity-report.html">datastore capacity report</a> and the <a href="snapshot-cleanup-report.html">snapshot report</a> and you have a three-part daily health check that takes a minute to read. If the host list is very large, the trade-offs in our <a href="get-vm-vs-get-view.html">Get-VM versus Get-View comparison</a> apply here as well. Once your team trusts the output, a simple point-and-click front end can let others run it without opening PowerShell, as described in <a href="it-team-scripts.html">our IT scripting overview</a>.</p>
+
+      <div class="post-cta">
+        <h3>Want help automating your IT routines?</h3>
+        <p>Tell me which tasks eat up your team's time. I will reply personally.</p>
+        <div class="cta"><a class="btn primary" href="../index.html#contact">Start a conversation</a></div>
+      </div>
+
+      <div class="author">
+        <h4>Author Bio</h4>
+        <p>RMG Labs builds custom apps and practical automation, helping small businesses and IT teams save time, reduce errors and get more done.</p>
+      </div>
+    </article>
+  </div>
+</section>
+</main>
+
+<footer><div class="wrap">
+  <div>&copy; <span id="yr">2026</span> RMGLabs &middot; <span class="tagline">Higher ideas. Brighter solutions.</span></div>
+  <div><a href="../projects/">Projects</a><a href="./">Blog</a><a href="../privacy.html">Privacy</a><a href="../support.html">Support</a></div>
+</div></footer>
+<script>document.getElementById("yr").textContent = new Date().getFullYear();
+(function(){var b=document.querySelector(".menu-btn"),n=document.getElementById("site-nav");if(!b||!n)return;b.addEventListener("click",function(){var o=n.classList.toggle("open");b.setAttribute("aria-expanded",o?"true":"false");});n.addEventListener("click",function(e){if(e.target.tagName==="A"){n.classList.remove("open");b.setAttribute("aria-expanded","false");}});})();</script>
+</body>
+</html>
