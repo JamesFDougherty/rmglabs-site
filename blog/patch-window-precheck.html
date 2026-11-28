@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Before the Patch Window: A Read-Only PowerCLI Maintenance Pre-Check | RMGLabs</title>
+<meta name="description" content="A short read-only PowerCLI script finds common things that can stall ESXi maintenance mode, so you can fix them before patch night.">
+<link rel="canonical" href="https://rmglabs.net/blog/patch-window-precheck.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Before the Patch Window: A Read-Only PowerCLI Maintenance Pre-Check">
+<meta property="og:description" content="Find the things that can stall maintenance mode before patch night, with a safe, read-only PowerCLI script.">
+<meta property="og:url" content="https://rmglabs.net/blog/patch-window-precheck.html">
+<meta property="og:image" content="https://rmglabs.net/assets/brand/social/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../assets/brand/icons/favicon.ico" sizes="48x48">
+<link rel="icon" href="../assets/brand/icons/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../assets/brand/icons/apple-touch-icon.png">
+<link rel="manifest" href="../assets/brand/site.webmanifest">
+<meta name="theme-color" content="#f4f7fb">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../styles.css">
+<link rel="stylesheet" href="../home.css">
+<link rel="stylesheet" href="blog.css?v=11">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","headline":"Before the Patch Window: A Read-Only PowerCLI Maintenance Pre-Check","datePublished":"2026-11-28","author":{"@type":"Organization","name":"RMG Labs"},"publisher":{"@type":"Organization","name":"RMG Labs"},"mainEntityOfPage":"https://rmglabs.net/blog/patch-window-precheck.html","image":"https://rmglabs.net/assets/brand/social/og-image.png"}
+</script>
+</head>
+<body class="home">
+<header class="nav"><div class="wrap">
+  <a class="logo" href="../index.html" aria-label="RMG Labs home">
+    <svg class="peak" viewBox="0 0 40 38" aria-hidden="true"><polygon points="2,36 18,3 28,22 20,36" fill="#3f9dfd"/><polygon points="18,3 38,36 24,36 20,22" fill="#1f56d6"/></svg>
+    <span class="word"><span class="rmg">RMG</span> <span class="labs">LABS</span></span>
+  </a>
+  <button class="menu-btn" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="site-nav">
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+  </button>
+  <nav id="site-nav"><a href="../index.html#build">What I build</a><a href="../projects/">Projects</a><a href="../index.html#about">About</a><a href="../blog/">Blog</a><a href="../index.html#contact" class="pill">Contact</a></nav>
+</div></header>
+
+<main>
+<img class="hero-bg" src="../assets/topo.svg" alt="" aria-hidden="true" width="1440" height="1060">
+<section class="blog-hero">
+  <div class="wrap">
+    <a class="back" href="./">&larr; All articles</a>
+    <div class="eyebrow">VMware scripting &middot; Patch planning</div>
+    <h1>Before the Patch Window: A Read-Only PowerCLI Maintenance Pre-Check</h1>
+    <div class="post-meta"><span>By RMG Labs</span><span>November 28, 2026</span><span>5 min read</span></div>
+  </div>
+</section>
+
+<section class="post-body">
+  <div class="wrap">
+    <article class="post">
+      <p>Patch night usually starts the same way: you put the first ESXi host into maintenance mode and watch the task. If every virtual machine moves off cleanly, the evening goes to plan. If one will not move, the progress bar sits still while you hunt for the reason. Many of those reasons can be spotted days earlier. A short read-only PowerCLI pre-check gives you a list to work through during business hours instead of at midnight.</p>
+
+      <h2>Why Maintenance Mode Stalls</h2>
+      <p>A host cannot finish entering maintenance mode while powered-on VMs are still running on it. With DRS set to Fully Automated, vSphere can move them for you. Broadcom notes that with DRS in Manual or Partially Automated mode, or turned off, the task can <a href="https://knowledge.broadcom.com/external/article/451053">sit waiting</a> until the VMs are migrated by hand or the setting is changed. Individual VMs can also hold things up. A VMware Tools installer left mounted can <a href="https://knowledge.broadcom.com/external/article/310528">cause a migration to fail</a>. Connected CD/DVD media that the destination host cannot reach, disks on storage only one host can see, passthrough hardware and strict placement rules all deserve a look too.</p>
+
+      <h2>What the Script Checks</h2>
+      <ul>
+        <li>Whether DRS is enabled on the cluster, and its automation level.</li>
+        <li>Enabled <em>must</em> rules that tie VMs to, or keep them away from, groups of hosts.</li>
+        <li>Powered-on VMs with the VMware Tools installer mounted.</li>
+        <li>Connected CD/DVD drives, showing the ISO path or device where available.</li>
+        <li>VMs using a datastore that does not report access from multiple hosts.</li>
+        <li>VMs with a PCI passthrough or vGPU device.</li>
+      </ul>
+
+      <h2>The Script</h2>
+      <p>You need the VMware PowerCLI module and a vCenter account with read access. PowerCLI prompts for your username and password when it connects, and nothing is stored. Save the script as <code>Get-PatchWindowPreCheck.ps1</code> and give it your vCenter address and the exact cluster name. It only reads: it does not disconnect drives, move VMs or change DRS.</p>
+      <pre><code>&lt;#
+.SYNOPSIS
+Finds common things that can stall ESXi maintenance mode in a cluster.
+.DESCRIPTION
+Checks the cluster DRS setting and required VM-to-host rules, then looks
+at each powered-on VM for a mounted VMware Tools installer, a connected
+CD/DVD drive, disks or files on a non-shared datastore and PCI
+passthrough devices. Optionally exports the findings to CSV. Read-only:
+nothing is changed.
+.NOTES
+Author: James Dougherty (scripty)
+Version: 1.0
+Updated: 2026-11-28
+Category: VMware
+Requires: VMware PowerCLI
+Credentials: Prompts for your vCenter username and password when it runs
+Output: Text and tables on screen, optional CSV file
+.PARAMETER Server
+vCenter server name or address.
+.PARAMETER ClusterName
+Exact name of the cluster you plan to patch.
+.PARAMETER CsvPath
+Optional path for a CSV copy of the VM findings.
+.EXAMPLE
+.\Get-PatchWindowPreCheck.ps1 -Server vcenter.example.local -ClusterName Lab01
+#&gt;
+param(
+    [Parameter(Mandatory)][string]$Server,
+    [Parameter(Mandatory)][string]$ClusterName,
+    [string]$CsvPath
+)
+
+# No credentials are stored in this script: PowerCLI asks for them.
+Connect-VIServer -Server $Server -ErrorAction Stop | Out-Null
+
+try {
+    $cluster = Get-Cluster -Name $ClusterName -ErrorAction Stop |
+        Select-Object -First 1
+
+    Write-Host "Cluster: $($cluster.Name)"
+    Write-Host "DRS enabled: $($cluster.DrsEnabled)"
+    Write-Host "DRS automation level: $($cluster.DrsAutomationLevel)"
+
+    Write-Host "Enabled 'must' VM-to-host rules:"
+    Get-DrsVMHostRule -Cluster $cluster |
+        Where-Object { $_.Enabled -and "$($_.Type)" -like 'Must*' } |
+        Format-Table Name, Type, VMGroup, VMHostGroup -AutoSize | Out-Host
+
+    # Datastores that only one host can reach
+    $localStores = @{}
+    Get-VMHost -Location $cluster | Get-Datastore |
+        Where-Object { $_.ExtensionData.Summary.MultipleHostAccess -eq $false } |
+        ForEach-Object { $localStores[$_.Id] = $_.Name }
+
+    $vms = Get-VM -Location $cluster |
+        Where-Object { $_.PowerState -eq 'PoweredOn' }
+
+    $report = foreach ($vm in $vms) {
+        $findings = @()
+
+        if ($vm.ExtensionData.Runtime.ToolsInstallerMounted) {
+            $findings += 'VMware Tools installer is mounted'
+        }
+
+        foreach ($cd in Get-CDDrive -VM $vm) {
+            if ($cd.ConnectionState.Connected) {
+                $source = @($cd.IsoPath, $cd.HostDevice, $cd.RemoteDevice) |
+                    Where-Object { $_ } | Select-Object -First 1
+                $findings += "Connected CD/DVD: $source"
+            }
+        }
+
+        foreach ($id in $vm.DatastoreIdList) {
+            if ($localStores.ContainsKey($id)) {
+                $findings += "Uses non-shared datastore: $($localStores[$id])"
+            }
+        }
+
+        $pci = $vm.ExtensionData.Config.Hardware.Device |
+            Where-Object { $_ -is [VMware.Vim.VirtualPCIPassthrough] }
+        if ($pci) { $findings += 'Has a PCI passthrough or vGPU device' }
+
+        foreach ($finding in $findings) {
+            [pscustomobject]@{
+                VM      = $vm.Name
+                Host    = $vm.VMHost.Name
+                Finding = $finding
+            }
+        }
+    }
+
+    if ($report) {
+        $report | Sort-Object Host, VM | Format-Table -AutoSize -Wrap | Out-Host
+        if ($CsvPath) { $report | Export-Csv -Path $CsvPath -NoTypeInformation }
+    }
+    else {
+        Write-Host 'No VM findings from these checks.'
+    }
+}
+finally {
+    Disconnect-VIServer -Server $Server -Confirm:$false
+}</code></pre>
+      <p class="form-note">Prefer clicking to typing? With a little work, or a little help from me, any script like this can have a nice-looking form as well. <a href="../index.html#contact">Get in touch</a>.</p>
+
+      <h2>Working Through the Findings</h2>
+      <p>Treat each line as a question to answer, not a confirmed fault.</p>
+      <ul>
+        <li><strong>Tools installer:</strong> check with the system owner that no install or upgrade is still running, then unmount it from the VM&rsquo;s menu.</li>
+        <li><strong>CD/DVD:</strong> an ISO on shared storage may be perfectly fine. If nobody needs it, disconnect it. If someone does, confirm every destination host can reach it.</li>
+        <li><strong>Non-shared datastore:</strong> decide ahead of time whether to move the storage, shut the VM down for the window, or leave that host for a separate slot.</li>
+        <li><strong>Passthrough or vGPU:</strong> some of these VMs cannot be live migrated, and others can only under specific conditions. Confirm which applies and plan a shutdown with the owner if needed.</li>
+        <li><strong>Must rules:</strong> make sure each affected VM still has at least one allowed host while its current host is out.</li>
+      </ul>
+
+      <h2>What It Does Not Cover</h2>
+      <p>A clean result is encouraging, but it is not a guarantee. The script does not test spare capacity, VM-to-VM rules, HA admission control, vMotion networking, CPU compatibility or whether a shared datastore is visible to <em>every</em> host. vSAN clusters have their own data evacuation choices, and your hardware and update tooling may add prechecks that you should run as well.</p>
+
+      <h2>Make It Part of the Routine</h2>
+      <p>Run the pre-check a few days before the window so owners have time to respond, then run it again on the day to catch anything new. Pair it with the <a href="host-health-report.html">host health report</a> to confirm the other hosts are healthy enough to take the load, and the <a href="snapshot-cleanup-report.html">snapshot report</a> to tidy up old snapshots before changes begin. Saving each CSV with your change ticket also leaves a simple record of what you checked.</p>
+
+      <div class="post-cta">
+        <h3>Want help automating your IT routines?</h3>
+        <p>Tell me which tasks eat up your team's time. I will reply personally.</p>
+        <div class="cta"><a class="btn primary" href="../index.html#contact">Start a conversation</a></div>
+      </div>
+
+      <div class="author">
+        <h4>Author Bio</h4>
+        <p>RMG Labs builds custom apps and practical automation, helping small businesses and IT teams save time, reduce errors and get more done.</p>
+      </div>
+    </article>
+  </div>
+</section>
+</main>
+
+<footer><div class="wrap">
+  <div>&copy; <span id="yr">2026</span> RMGLabs &middot; <span class="tagline">Higher ideas. Brighter solutions.</span></div>
+  <div><a href="../projects/">Projects</a><a href="./">Blog</a><a href="../privacy.html">Privacy</a><a href="../support.html">Support</a></div>
+</div></footer>
+<script>document.getElementById("yr").textContent = new Date().getFullYear();
+(function(){var b=document.querySelector(".menu-btn"),n=document.getElementById("site-nav");if(!b||!n)return;b.addEventListener("click",function(){var o=n.classList.toggle("open");b.setAttribute("aria-expanded",o?"true":"false");});n.addEventListener("click",function(e){if(e.target.tagName==="A"){n.classList.remove("open");b.setAttribute("aria-expanded","false");}});})();</script>
+</body>
+</html>
